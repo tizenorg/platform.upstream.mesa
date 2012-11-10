@@ -2,7 +2,7 @@
 %define enable_wayland 1
 
 #
-%define _version 9.0.git20121030
+%define _version 9.0.git20121028
 %define _name_archive MesaLib
 
 Name:           mesa
