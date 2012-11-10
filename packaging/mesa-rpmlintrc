@@ -1,0 +1,2 @@
+# Want to allow for multiple vendors
+addFilter("shlib-policy-name-error")
