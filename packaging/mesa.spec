@@ -2,11 +2,11 @@
 %define enable_wayland 1
 
 #
-%define _version 9.0
+%define _version 9.0.git20121030
 %define _name_archive MesaLib
 
 Name:           mesa
-Version:        9.0
+Version:        9.0.git20121030
 Release:        0
 BuildRequires: makedepend
 BuildRequires:  autoconf >= 2.59
