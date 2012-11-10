@@ -20,7 +20,7 @@ BuildRequires:  expat-devel
 BuildRequires:  libtool
 BuildRequires:  libxml2-python
 BuildRequires:  pkgconfig
-BuildRequires:  python-base
+BuildRequires:  python
 BuildRequires:  pkgconfig(dri2proto) >= 2.1
 BuildRequires:  pkgconfig(glproto) >= 1.4.11
 BuildRequires:  pkgconfig(libdrm) >= 2.4.24
@@ -351,7 +351,7 @@ packages.
 
 
 %prep
-%setup -n Mesa-%{_version}  -q
+%setup -n MesaLib-%{_version}  -q
 
 rm -rf docs/README.{VMS,WIN32,OS2}
 
