@@ -1,5 +1,5 @@
 %define glamor 1
-%define enable_wayland 0
+%define enable_wayland 1
 
 #
 %define _version 9.0
