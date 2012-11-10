@@ -6,7 +6,7 @@
 %define _name_archive MesaLib
 
 Name:           mesa
-Version:        9.0.git20121030
+Version:        9.0.git20121028
 Release:        0
 BuildRequires: makedepend
 BuildRequires:  autoconf >= 2.59
