@@ -379,7 +379,7 @@ autoreconf -fi
 %ifarch %ix86 x86_64
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
-           --with-gallium-drivers="" \
+           --with-gallium-drivers="swrast,svga" \
            --enable-xvmc \
 %endif
 %ifarch %arm
@@ -552,20 +552,20 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 
 %files -n libxatracker
 %defattr(-,root,root)
-#%_libdir/libxatracker.so.1*
+%_libdir/libxatracker.so.1*
 
 %files -n libxatracker-devel
 %defattr(-,root,root)
-#%_includedir/xa_*.h
-#%_libdir/libxatracker.so
-#%_libdir/pkgconfig/xatracker.pc
+%_includedir/xa_*.h
+%_libdir/libxatracker.so
+%_libdir/pkgconfig/xatracker.pc
 
 
 %files -n libXvMC_softpipe
 %defattr(-,root,root)
-#%_libdir/libXvMCsoftpipe.so
-#%_libdir/libXvMCsoftpipe.so.1
-#%_libdir/libXvMCsoftpipe.so.1.0
+%_libdir/libXvMCsoftpipe.so
+%_libdir/libXvMCsoftpipe.so.1
+%_libdir/libXvMCsoftpipe.so.1.0
 
 %endif
 
