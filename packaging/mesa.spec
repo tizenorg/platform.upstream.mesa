@@ -46,7 +46,7 @@ Summary:        System for rendering interactive 3-D graphics
 License:        MIT
 Group:          System/Libraries
 Source:         %{_name_archive}-%{_version}.tar.bz2
-Source2:        baselibs.conf
+#Source2:        baselibs.conf
 Source3:        README.updates
 Source5:        drirc
 Source6:        %name-rpmlintrc
