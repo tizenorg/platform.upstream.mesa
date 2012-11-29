@@ -2,7 +2,6 @@
 %define enable_wayland 1
 
 #
-%define _version 9.0.git20121028
 %define _name_archive MesaLib
 
 Name:           mesa
@@ -45,7 +44,7 @@ Url:            http://www.mesa3d.org
 Summary:        System for rendering interactive 3-D graphics
 License:        MIT
 Group:          System/Libraries
-Source:         %{_name_archive}-%{_version}.tar.bz2
+Source:         %{_name_archive}-%{version}.tar.bz2
 Source2:        baselibs.conf
 Source3:        README.updates
 Source5:        drirc
@@ -351,7 +350,7 @@ packages.
 
 
 %prep
-%setup -n MesaLib-%{_version}  -q
+%setup -n MesaLib-%{version}  -q
 
 rm -rf docs/README.{VMS,WIN32,OS2}
 
