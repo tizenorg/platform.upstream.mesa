@@ -1,12 +1,12 @@
 %define glamor 1
-%define enable_wayland 1
+%bcond_with wayland
 
 #
-%define _version 9.0.git20121028
+%define _version 9.0.1
 %define _name_archive MesaLib
 
 Name:           mesa
-Version:        9.0.git20121028
+Version:        9.0.1
 Release:        0
 BuildRequires: makedepend
 BuildRequires:  autoconf >= 2.59
@@ -36,7 +36,7 @@ BuildRequires:  pkgconfig(xdamage)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xfixes)
 BuildRequires:  pkgconfig(xxf86vm)
-%if 0%{?enable_wayland}
+%if %{with wayland}
 BuildRequires:	pkgconfig(wayland-client)
 BuildRequires:	pkgconfig(wayland-server)
 %endif
@@ -79,7 +79,7 @@ Requires:       mesa-libGLESv1_CM-devel = %version
 Requires:       mesa-libGLESv2-devel = %version
 Requires:       mesa-libIndirectGL = %version
 Requires:       mesa-libglapi = %version
-%if 0%{?enable_wayland}
+%if %{with wayland}
 Requires:	libwayland-egl 
 %endif
 Requires:       libOSMesa = %version
@@ -362,7 +362,7 @@ rm -f src/mesa/depend
 autoreconf -fi
 %configure --enable-gles1 \
            --enable-gles2 \
-%if 0%{?enable_wayland}
+%if %{with wayland}
            --with-egl-platforms=x11,drm,wayland \
 %else
            --with-egl-platforms=x11,drm \
@@ -532,7 +532,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %defattr(-,root,root)
 %_libdir/libOSMesa.so.8*
 
-%if 0%{?enable_wayland}
+%if %{with wayland}
 %files -n libwayland-egl
 %defattr(-,root,root)
 %_libdir/libwayland-egl.so.1*
@@ -579,7 +579,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %_libdir/libOSMesa.so
 %_libdir/libglapi.so
 %_libdir/pkgconfig/osmesa.pc
-%if 0%{?enable_wayland}
+%if %{with wayland}
 %_libdir/libwayland-egl.so
 %_libdir/pkgconfig/wayland-egl.pc
 %endif
