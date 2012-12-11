@@ -11,6 +11,7 @@ Release:        0
 BuildRequires: makedepend
 BuildRequires:  autoconf >= 2.59
 BuildRequires:  automake
+BuildRequires:  llvm-devel
 BuildRequires:  bison
 BuildRequires:  fdupes
 BuildRequires:  flex
@@ -370,7 +371,6 @@ autoreconf -fi
            --enable-shared-glapi \
            --enable-xa \
            --enable-texture-float \
-	   --enable-glu \
 %if %glamor
            --enable-gbm \
            --enable-glx-tls \
