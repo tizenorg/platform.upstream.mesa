@@ -1,3 +1,6 @@
+* Tue Dec 11 2012 Anas Nashif <anas.nashif@intel.com> mesa-9.0.1@8b3e302
+- actually use bcond_without to enable wayland by default
+
 * Tue Dec 11 2012 Anas Nashif <anas.nashif@intel.com> mesa-9.0.1@95d2ec0
 - Update to 9.0.1
 
