@@ -1,5 +1,5 @@
 %define glamor 1
-%bcond_with wayland
+%bcond_without wayland
 
 #
 %define _version 9.0.1
