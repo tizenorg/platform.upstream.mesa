@@ -2,11 +2,11 @@
 %bcond_without wayland
 
 #
-%define _version 9.0.1
+%define _version 9.0.2
 %define _name_archive MesaLib
 
 Name:           mesa
-Version:        9.0.1
+Version:        9.0.2
 Release:        0
 BuildRequires: makedepend
 BuildRequires:  autoconf >= 2.59
@@ -17,7 +17,6 @@ BuildRequires:  fdupes
 BuildRequires:  flex
 BuildRequires:  gcc-c++
 BuildRequires:  expat-devel
-#BuildRequires:  libtalloc-devel
 BuildRequires:  libtool
 BuildRequires:  libxml2-python
 BuildRequires:  pkgconfig
