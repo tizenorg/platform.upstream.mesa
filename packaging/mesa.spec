@@ -52,7 +52,6 @@ Source3:        README.updates
 Source5:        drirc
 Source6:        %name-rpmlintrc
 # do not put dates in sources to fix build-compare
-Patch1:         Mesa-nodate.diff
 Provides:	Mesa = %version
 
 %description
