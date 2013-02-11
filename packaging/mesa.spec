@@ -458,8 +458,9 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 
 
 
-%post   -n libXvMC_softpipe
-%postun -n libXvMC_softpipe
+%post   -n libXvMC_softpipe -p /sbin/ldconfig
+
+%postun -n libXvMC_softpipe -p /sbin/ldconfig
 
 %endif
 
@@ -469,7 +470,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 
 %files
 %defattr(-,root,root)
-%doc docs/README* docs/COPYING
+%license docs/COPYING
 %config /etc/drirc
 %{_libdir}/dri/
 %_libdir/libdricore9*.so.*
