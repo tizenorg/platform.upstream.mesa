@@ -68,7 +68,7 @@ just Mesa or The Mesa 3-D graphics library.
 
 %package devel
 Summary:        Libraries, includes and more to develop Mesa applications
-Group:          Development/Libraries/X11
+Group:          Development/Libraries
 Requires:       mesa = %version
 Requires:       mesa-libEGL-devel = %version
 Requires:       mesa-libGL-devel = %version
