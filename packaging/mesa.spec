@@ -225,12 +225,12 @@ vertex and fragment shaders.
 This package provides a development environment for building
 applications using the OpenGL|ES 2.x APIs.
 
-%package -n Mesa-libGLESv3-devel
+%package -n mesa-libGLESv3-devel
 Summary:        Development files for the OpenGL ES 3.x API
 Group:          Development/Libraries
 Requires:       pkgconfig(egl)
 
-%description -n Mesa-libGLESv3-devel
+%description -n mesa-libGLESv3-devel
 OpenGL|ES is a cross-platform API for full-function 2D and 3D
 graphics on embedded systems - including consoles, phones, appliances
 and vehicles. It contains a subset of OpenGL plus a number of
@@ -597,7 +597,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %_libdir/pkgconfig/dri.pc
 %_libdir/libdricore9*.so
 
-%files -n Mesa-libGLESv3-devel
+%files -n mesa-libGLESv3-devel
 %defattr(-,root,root)
 %_includedir/GLES3
 
