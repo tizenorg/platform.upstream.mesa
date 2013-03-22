@@ -7,6 +7,7 @@
 Name:           mesa
 Version:        9.1.1
 Release:        0
+BuildRequires: gettext-tools
 BuildRequires: makedepend
 BuildRequires:  autoconf >= 2.59
 BuildRequires:  automake
@@ -224,6 +225,19 @@ vertex and fragment shaders.
 This package provides a development environment for building
 applications using the OpenGL|ES 2.x APIs.
 
+%package -n Mesa-libGLESv3-devel
+Summary:        Development files for the OpenGL ES 3.x API
+Group:          Development/Libraries
+Requires:       pkgconfig(egl)
+
+%description -n Mesa-libGLESv3-devel
+OpenGL|ES is a cross-platform API for full-function 2D and 3D
+graphics on embedded systems - including consoles, phones, appliances
+and vehicles. It contains a subset of OpenGL plus a number of
+extensions for the special needs of embedded systems.
+
+This package provides a development environment for building
+applications using the OpenGL|ES 3.x APIs.
 
 %package -n mesa-libIndirectGL
 # This is the equivalent to Debian's libgl1-mesa-swx11
@@ -387,7 +401,7 @@ make %{?_smp_mflags}
 %make_install
 # build and install Indirect Rendering only libGL
 
-make clean-local
+make clean
 %configure --enable-xlib-glx \
            --enable-osmesa \
            --disable-dri \
@@ -562,7 +576,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %defattr(-,root,root)
 %_libdir/libXvMCsoftpipe.so
 %_libdir/libXvMCsoftpipe.so.1
-%_libdir/libXvMCsoftpipe.so.1.0
+%_libdir/libXvMCsoftpipe.so.1.0.0
 
 %endif
 
@@ -582,5 +596,9 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %endif
 %_libdir/pkgconfig/dri.pc
 %_libdir/libdricore9*.so
+
+%files -n Mesa-libGLESv3-devel
+%defattr(-,root,root)
+%_includedir/GLES3
 
 %changelog
