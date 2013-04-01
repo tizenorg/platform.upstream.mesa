@@ -88,6 +88,9 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surf, EGLint at
 
 
 extern EGLBoolean
+_eglQuerySurfacePointer(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface, EGLint attribute, void **value);
+
+extern EGLBoolean
 _eglSurfaceAttrib(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surf, EGLint attribute, EGLint value);
 
 

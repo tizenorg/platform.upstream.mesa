@@ -63,6 +63,7 @@ typedef _EGLSurface *(*CreatePixmapSurface_t)(_EGLDriver *drv, _EGLDisplay *dpy,
 typedef _EGLSurface *(*CreatePbufferSurface_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLConfig *config, const EGLint *attrib_list);
 typedef EGLBoolean (*DestroySurface_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface);
 typedef EGLBoolean (*QuerySurface_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface, EGLint attribute, EGLint *value);
+typedef EGLBoolean (*QuerySurfacePointer_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface, EGLint attribute, void **value);
 typedef EGLBoolean (*SurfaceAttrib_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface, EGLint attribute, EGLint value);
 typedef EGLBoolean (*BindTexImage_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface, EGLint buffer);
 typedef EGLBoolean (*ReleaseTexImage_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface, EGLint buffer);
@@ -168,6 +169,10 @@ struct _egl_api
    WaitClient_t WaitClient;
    WaitNative_t WaitNative;
    GetProcAddress_t GetProcAddress;
+
+#ifdef EGL_ANGLE_query_surface_pointer
+   QuerySurfacePointer_t QuerySurfacePointer;
+#endif
 
 #ifdef EGL_MESA_screen_surface
    ChooseModeMESA_t ChooseModeMESA;

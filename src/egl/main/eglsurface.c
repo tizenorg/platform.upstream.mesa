@@ -426,6 +426,24 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
 }
 
 
+EGLBoolean
+_eglQuerySurfacePointer(_EGLDriver *drv, _EGLDisplay *dpy,
+                        _EGLSurface *surface, EGLint attribute, void **value)
+{
+   /* The EGL_ANGLE_query_surface_pointer spec says:
+    *
+    *     "If an attribute queried via eglQuerySurfacePointerANGLE is not
+    *     of type 'pointer', then eglQuerySurfacePointer returns EGL_FALSE
+    *     and an EGL_BAD_PARAMETER error is generated."
+    *
+    * There currently aren't any attributes with type pointer, so always
+    * generate the error.
+    */
+   _eglError(EGL_BAD_PARAMETER, "eglQuerySurfacePointerANGLE");
+   return EGL_FALSE;
+}
+
+
 /**
  * Default fallback routine - drivers might override this.
  */

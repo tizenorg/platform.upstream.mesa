@@ -608,6 +608,25 @@ eglQuerySurface(EGLDisplay dpy, EGLSurface surface,
    RETURN_EGL_EVAL(disp, ret);
 }
 
+#ifdef EGL_ANGLE_query_surface_pointer
+
+EGLBoolean EGLAPIENTRY
+eglQuerySurfacePointerANGLE(EGLDisplay dpy, EGLSurface surface,
+                            EGLint attribute, void **value)
+{
+   _EGLDisplay *disp = _eglLockDisplay(dpy);
+   _EGLSurface *surf = _eglLookupSurface(surface, disp);
+   _EGLDriver *drv;
+   EGLBoolean ret;
+
+   _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
+   ret = drv->API.QuerySurfacePointer(drv, disp, surf, attribute, value);
+
+   RETURN_EGL_EVAL(disp, ret);
+}
+
+#endif /* EGL_ANGLE_query_surface_pointer */
+
 EGLBoolean EGLAPIENTRY
 eglSurfaceAttrib(EGLDisplay dpy, EGLSurface surface,
                  EGLint attribute, EGLint value)
@@ -931,6 +950,9 @@ eglGetProcAddress(const char *procname)
       { "eglWaitGL", (_EGLProc) eglWaitGL },
       { "eglWaitNative", (_EGLProc) eglWaitNative },
 #endif /* _EGL_GET_CORE_ADDRESSES */
+#ifdef EGL_ANGLE_query_surface_pointer
+      { "eglQuerySurfacePointerANGLE", (_EGLProc) eglQuerySurfacePointerANGLE },
+#endif /* EGL_ANGLE_query_surface_pointer */
 #ifdef EGL_MESA_screen_surface
       { "eglChooseModeMESA", (_EGLProc) eglChooseModeMESA },
       { "eglGetModesMESA", (_EGLProc) eglGetModesMESA },
