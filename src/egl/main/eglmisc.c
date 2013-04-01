@@ -119,6 +119,11 @@ _eglUpdateExtensionsString(_EGLDisplay *dpy)
    _EGL_CHECK_EXTENSION(EXT_buffer_age);
 
    _EGL_CHECK_EXTENSION(NV_post_sub_buffer);
+
+#ifdef EGL_ANGLE_query_surface_pointer
+   _eglAppendExtension(&exts, "EGL_ANGLE_query_surface_pointer");
+#endif /* EGL_ANGLE_query_surface_pointer */
+
 #undef _EGL_CHECK_EXTENSION
 }
 

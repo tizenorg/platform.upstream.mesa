@@ -87,6 +87,10 @@ _eglInitDriverFallbacks(_EGLDriver *drv)
    drv->API.GetProcAddress = (GetProcAddress_t) _eglReturnFalse;
    drv->API.QueryString = _eglQueryString;
 
+#ifdef EGL_ANGLE_query_surface_pointer
+   drv->API.QuerySurfacePointer = _eglQuerySurfacePointer;
+#endif /* EGL_ANGLE_query_surface_pointer */
+
 #ifdef EGL_MESA_screen_surface
    drv->API.CopyContextMESA = (CopyContextMESA_t) _eglReturnFalse;
    drv->API.CreateScreenSurfaceMESA =
