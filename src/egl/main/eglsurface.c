@@ -453,6 +453,9 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
        */
       *value = 0;
       break;
+   case EGL_BITMAP_PIXEL_SIZE_KHR:
+      *value = surface->Config->PixelSize;
+      break;
    default:
       goto bad_attribute;
    }
