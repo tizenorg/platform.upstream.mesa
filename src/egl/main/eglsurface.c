@@ -415,6 +415,44 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
          goto bad_attribute;
       *value = drv->API.QueryBufferAge(drv, dpy, surface);
       break;
+   case EGL_BITMAP_PIXEL_RED_OFFSET_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      *value = surface->Config->RedOffset;
+      break;
+   case EGL_BITMAP_PIXEL_GREEN_OFFSET_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      *value = surface->Config->GreenOffset;
+      break;
+   case EGL_BITMAP_PIXEL_BLUE_OFFSET_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      *value = surface->Config->BlueOffset;
+      break;
+   case EGL_BITMAP_PIXEL_ALPHA_OFFSET_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      *value = surface->Config->AlphaOffset;
+      break;
+   case EGL_BITMAP_PIXEL_LUMINANCE_OFFSET_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      /* The EGL_KHR_lock_surface2 extension spec says:
+       *
+       *     "If a color component does not exist in the mapped buffer, then
+       *     the bit offset of that component is zero."
+       *
+       * There is no support in this EGL implementation for luminance
+       * surfaces.
+       */
+      *value = 0;
+      break;
    default:
       goto bad_attribute;
    }
