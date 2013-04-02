@@ -411,18 +411,19 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
       *value = surface->PostSubBufferSupportedNV;
       break;
    case EGL_BUFFER_AGE_EXT:
-      if (!dpy->Extensions.EXT_buffer_age) {
-         _eglError(EGL_BAD_ATTRIBUTE, "eglQuerySurface");
-         return EGL_FALSE;
-      }
+      if (!dpy->Extensions.EXT_buffer_age)
+         goto bad_attribute;
       *value = drv->API.QueryBufferAge(drv, dpy, surface);
       break;
    default:
-      _eglError(EGL_BAD_ATTRIBUTE, "eglQuerySurface");
-      return EGL_FALSE;
+      goto bad_attribute;
    }
 
    return EGL_TRUE;
+
+bad_attribute:
+   _eglError(EGL_BAD_ATTRIBUTE, "eglQuerySurface");
+   return EGL_FALSE;
 }
 
 
