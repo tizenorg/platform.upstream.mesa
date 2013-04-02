@@ -109,6 +109,7 @@ _eglUpdateExtensionsString(_EGLDisplay *dpy)
 
    _EGL_CHECK_EXTENSION(KHR_surfaceless_context);
    _EGL_CHECK_EXTENSION(KHR_create_context);
+   _EGL_CHECK_EXTENSION(KHR_lock_surface);
 
    _EGL_CHECK_EXTENSION(NOK_swap_region);
    _EGL_CHECK_EXTENSION(NOK_texture_from_pixmap);
