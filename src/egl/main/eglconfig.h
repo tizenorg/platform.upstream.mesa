@@ -45,10 +45,27 @@ struct _egl_config
 
    /* core */
    EGLint BufferSize;
+   EGLint PixelSize;          /**< Size of a pixel including unused bits. */
    EGLint AlphaSize;
    EGLint BlueSize;
    EGLint GreenSize;
    EGLint RedSize;
+
+   /**
+    * \name Color locations within n-bit word
+    *
+    * Assuming a pixel is stored as an n-bit word (where n is equal to
+    * \c ::PixelSize), these are the bit positions within that word where
+    * each color component begins.  If the pixel does not have alpha,
+    * \c ::AlphaOffset should be set to zero.
+    */
+   /*@{*/
+   EGLint AlphaOffset;
+   EGLint BlueOffset;
+   EGLint GreenOffset;
+   EGLint RedOffset;
+   /*@}*/
+
    EGLint DepthSize;
    EGLint StencilSize;
    EGLint ConfigCaveat;
