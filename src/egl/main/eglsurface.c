@@ -415,6 +415,13 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
          goto bad_attribute;
       *value = drv->API.QueryBufferAge(drv, dpy, surface);
       break;
+   case EGL_BITMAP_ORIGIN_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      *value = (surface->Config->YInvertedNOK)
+         ? EGL_UPPER_LEFT_KHR : EGL_LOWER_LEFT_KHR;
+      break;
    case EGL_BITMAP_PIXEL_RED_OFFSET_KHR:
       if (!dpy->Extensions.KHR_lock_surface)
          goto bad_attribute;
