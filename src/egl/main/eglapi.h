@@ -80,6 +80,11 @@ typedef EGLBoolean (*WaitNative_t)(_EGLDriver *drv, _EGLDisplay *dpy, EGLint eng
 typedef _EGLProc (*GetProcAddress_t)(_EGLDriver *drv, const char *procname);
 
 
+#ifdef EGL_KHR_lock_surface
+typedef EGLBoolean (*MapSurface_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface);
+typedef EGLBoolean (*UnmapSurface_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface);
+#endif
+
 
 #ifdef EGL_MESA_screen_surface
 typedef EGLBoolean (*ChooseModeMESA_t)(_EGLDriver *drv, _EGLDisplay *dpy, _EGLScreen *screen, const EGLint *attrib_list, EGLModeMESA *modes, EGLint modes_size, EGLint *num_modes);
@@ -172,6 +177,11 @@ struct _egl_api
 
 #ifdef EGL_ANGLE_query_surface_pointer
    QuerySurfacePointer_t QuerySurfacePointer;
+#endif
+
+#ifdef EGL_KHR_lock_surface
+   MapSurface_t MapSurface;
+   UnmapSurface_t UnmapSurface;
 #endif
 
 #ifdef EGL_MESA_screen_surface
