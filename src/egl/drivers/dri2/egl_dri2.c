@@ -26,6 +26,7 @@
  */
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
 #include <limits.h>
@@ -124,6 +125,7 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
    EGLint num_configs = 0;
    EGLint config_id;
    int i;
+   bool mappable = false;
 
    dri2_dpy = disp->DriverData;
    _eglInitConfig(&base, disp, id);
@@ -183,6 +185,10 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
          dri_masks[3] = value;
          break;
 
+      case __DRI_ATTRIB_MAPPABLE:
+         mappable = true;
+         break;
+
       default:
 	 key = dri2_to_egl_attribute_map[attrib];
 	 if (key != 0)
@@ -208,6 +214,31 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
    if (rgba_masks && memcmp(rgba_masks, dri_masks, sizeof(dri_masks)))
       return NULL;
 
+   /* ffs() returns 1 for the least significant bit.  It also returns 0 if no
+    * bits are set.  For the 0 case, we want 0.  For the 1 case, we also want
+    * 0.
+    *
+    * The EGL_KHR_lock_surface spec says:
+    *
+    *     "If a color component does not exist in the mapped buffer, then the
+    *     bit offset of that component is zero."
+    */
+   base.AlphaOffset = ffs(dri_masks[3]);
+   if (base.AlphaOffset != 0)
+      base.AlphaOffset--;
+
+   base.BlueOffset = ffs(dri_masks[2]);
+   if (base.BlueOffset != 0)
+      base.BlueOffset--;
+
+   base.GreenOffset = ffs(dri_masks[1]);
+   if (base.GreenOffset != 0)
+      base.GreenOffset--;
+
+   base.RedOffset = ffs(dri_masks[0]);
+   if (base.RedOffset != 0)
+      base.RedOffset--;
+
    base.NativeRenderable = EGL_TRUE;
 
    base.SurfaceType = surface_type;
@@ -219,7 +250,69 @@ dri2_add_config(_EGLDisplay *disp, const __DRIconfig *dri_config, int id,
    }
 
    base.RenderableType = disp->ClientAPIs;
+   if (mappable)
+      base.RenderableType |= EGL_LOCK_SURFACE_BIT_KHR;
+
    base.Conformant = disp->ClientAPIs;
+
+   /* If the surface is not mappable, then the MatchFormat must be EGL_NONE.
+    * Otherwise, try to suss out the MatchFormat based on the locations of the
+    * bits in the masks.
+    */
+   if (mappable) {
+      if (base.RedSize == 8
+          && base.GreenSize == 8
+          && base.BlueSize == 8
+          && base.AlphaSize == 8) {
+         base.MatchFormat = EGL_FORMAT_RGBA_8888_KHR;
+
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+         if (base.RedOffset == 16
+             && base.GreenOffset == 8
+             && base.BlueOffset == 0
+             && base.AlphaOffset == 24) {
+            base.MatchFormat = EGL_FORMAT_RGBA_8888_EXACT_KHR;
+         }
+#else
+         if (base.RedOffset == 8
+             && base.GreenOffset == 16
+             && base.BlueOffset == 24
+             && base.AlphaOffset == 0) {
+            base.MatchFormat = EGL_FORMAT_RGBA_8888_EXACT_KHR;
+         }
+#endif
+      } else if (base.RedSize == 5
+                 && base.GreenSize == 6
+                 && base.BlueSize == 5
+                 && base.AlphaSize == 0) {
+         base.MatchFormat = EGL_FORMAT_RGB_565_KHR;
+
+         if (dri_masks[0] == 0x0000f800 /* red */
+             && dri_masks[1] == 0x000007e0 /* green */
+             && dri_masks[2] == 0x0000001f /* blue */) {
+            base.MatchFormat = EGL_FORMAT_RGB_565_EXACT_KHR;
+         }
+      } else {
+         /* The EGL_KHR_lock_surface spec doesn't say what should be returned
+          * in this case.  It only says:
+          *
+          *     "Querying the EGL_MATCH_FORMAT_KHR attribute results in
+          *     EGL_NONE for an EGLConfig that is not lockable, one of the
+          *     "exact" formats (EGL_FORMAT_RGB_565_EXACT_KHR,
+          *     EGL_FORMAT_RGBA_8888_EXACT_KHR) if the color buffer matches
+          *     that format when mapped with eglLockSurface, or for any other
+          *     format a value that is not EGL_NONE or EGL_DONT_CARE but is
+          *     otherwise undefined."
+          *
+          * The last bit, "otherwise undefined," seems to imply that any value
+          * (other than those specifically mentioned) can be returned.  Return
+          * a value that is unlikely to be picked by a layered extension.
+          */
+         base.MatchFormat = 0;
+      }
+   } else {
+      base.MatchFormat = EGL_NONE;
+   }
 
    if (!_eglValidateConfig(&base, EGL_FALSE)) {
       _eglLog(_EGL_DEBUG, "DRI2: failed to validate config %d", id);
@@ -508,6 +601,9 @@ dri2_setup_screen(_EGLDisplay *disp)
          disp->Extensions.KHR_gl_texture_cubemap_image = EGL_TRUE;
       }
    }
+
+   if (dri2_dpy->mapDrawable)
+      disp->Extensions.KHR_lock_surface = EGL_TRUE;
 }
 
 EGLBoolean
@@ -550,6 +646,9 @@ dri2_create_screen(_EGLDisplay *disp)
 	 }
 	 if (strcmp(extensions[i]->name, __DRI2_CONFIG_QUERY) == 0) {
 	    dri2_dpy->config = (__DRI2configQueryExtension *) extensions[i];
+	 }
+	 if (strcmp(extensions[i]->name, __DRI2_MAPDRAWABLE) == 0) {
+	    dri2_dpy->mapDrawable = (__DRImapDrawableExtension *) extensions[i];
 	 }
       }
    } else {
@@ -1495,6 +1594,49 @@ dri2_export_drm_image_mesa(_EGLDriver *drv, _EGLDisplay *disp, _EGLImage *img,
    return EGL_TRUE;
 }
 
+static EGLBoolean
+dri2_map_surface(_EGLDriver *drv, _EGLDisplay *disp, _EGLSurface *surf)
+{
+   struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
+   struct dri2_egl_surface *dri2_surf = dri2_egl_surface(surf);
+
+   (void) drv;
+
+   if (dri2_dpy->mapDrawable == NULL)
+      return EGL_FALSE;
+
+   if (surf->Mapped)
+      return EGL_TRUE;
+
+   surf->Mapped =
+      dri2_dpy->mapDrawable->mapDrawable(dri2_surf->dri_drawable,
+                                         &surf->MappedPointer,
+                                         &surf->MappedPitch,
+                                         (surf->MapUsageHint & EGL_READ_SURFACE_BIT_KHR) != 0,
+                                         (surf->MapUsageHint & EGL_WRITE_SURFACE_BIT_KHR) != 0,
+                                         surf->MapPreservePixels) == 0;
+
+   return surf->Mapped;
+}
+
+static EGLBoolean
+dri2_unmap_surface(_EGLDriver *drv, _EGLDisplay *disp, _EGLSurface *surf)
+{
+   struct dri2_egl_display *dri2_dpy = dri2_egl_display(disp);
+   struct dri2_egl_surface *dri2_surf = dri2_egl_surface(surf);
+
+   (void) drv;
+
+   if (dri2_dpy->mapDrawable == NULL)
+      return EGL_FALSE;
+
+   if (!surf->Mapped)
+      return EGL_TRUE;
+
+   surf->Mapped = EGL_FALSE;
+   return dri2_dpy->mapDrawable->unmapDrawable(dri2_surf->dri_drawable) == 0;
+}
+
 #ifdef HAVE_WAYLAND_PLATFORM
 
 static void
@@ -1728,6 +1870,8 @@ _eglBuiltInDriverDRI2(const char *args)
    dri2_drv->base.API.UnbindWaylandDisplayWL = dri2_unbind_wayland_display_wl;
    dri2_drv->base.API.QueryWaylandBufferWL = dri2_query_wayland_buffer_wl;
 #endif
+   dri2_drv->base.API.MapSurface = dri2_map_surface;
+   dri2_drv->base.API.UnmapSurface = dri2_unmap_surface;
 
    dri2_drv->base.Name = "DRI2";
    dri2_drv->base.Unload = dri2_unload;
