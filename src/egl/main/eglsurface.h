@@ -75,6 +75,73 @@ struct _egl_surface
    EGLBoolean BoundToTexture;
 
    EGLBoolean PostSubBufferSupportedNV;
+
+   /**
+    * \name Flags used by EGL_KHR_lock_surface and EGL_KHR_lock_surface2.
+    */
+   /*@{*/
+   /**
+    * Has the surface been locked via eglLockSurfaceKHR?
+    *
+    * If the surface has been unlocked by eglUnlockSurfaceKHR, this field will
+    * be reset to false.
+    */
+   EGLBoolean Locked;
+
+   /**
+    * Has the surface been mapped?
+    *
+    * Quering either \c EGL_BITMAP_POINTER_KHR or \c EGL_BITMAP_PITCH_KHR will
+    * cause the surface to be mapped.  Once the surface has been mapped
+    * \c ::MappedPointer and \c ::MappedPitch will be set to valid values.
+    *
+    * Unlocking the surface will cause the surface to be unmapped, and this
+    * flag will be reset to false.
+    */
+   EGLBoolean Mapped;
+
+   /**
+    * Pointer to the mapped surface.
+    *
+    * Set by \c _egl_api::MapSurface when either \c EGL_BITMAP_POINTER_KHR or
+    * \c EGL_BITMAP_PITCH_KHR is queried by the application.  When the surface
+    * is unlocked by \c eglUnlockSurface, this value (along with \c ::Mapped,
+    * \c ::Locked, and \c ::MappedPitch) will be reset.
+    *
+    * Returned to applications by the \c EGL_BITMAP_POINTER_KHR query.
+    */
+   void *MappedPointer;
+
+   /**
+    * Byte pitch of the mapped surface.
+    *
+    * Set by \c _egl_api::MapSurface when either \c EGL_BITMAP_POINTER_KHR or
+    * \c EGL_BITMAP_PITCH_KHR is queried by the application.  When the surface
+    * is unlocked by \c eglUnlockSurface, this value (along with \c ::Mapped,
+    * \c ::Locked, and \c ::MappedPointer) will be reset.
+    *
+    * Returned to applications by the \c EGL_BITMAP_PITCH_KHR query.
+    */
+   unsigned MappedPitch;
+
+   /**
+    * Application specified usage hint
+    *
+    * Specified by the \c EGL_LOCK_USAGE_HINT_KHR to \c eglLockSurface.  This
+    * may (or may not) be used by \c _egl_api::MapSurface.
+    */
+   unsigned MapUsageHint;
+
+   /**
+    * Application specified pixel preservation flag
+    *
+    * Specified by the \c EGL_MAP_PRESERVE_PIXELS_KHR to \c eglLockSurface.
+    * The driver's \c _egl_api::MapSurface will use this flag to determine
+    * whether or not to copy the current contents of the surface into the
+    * mapped region.
+    */
+   EGLBoolean MapPreservePixels;
+   /*@}*/
 };
 
 
