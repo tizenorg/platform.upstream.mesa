@@ -924,6 +924,10 @@ eglGetProcAddress(const char *procname)
 #ifdef EGL_ANGLE_query_surface_pointer
       { "eglQuerySurfacePointerANGLE", (_EGLProc) eglQuerySurfacePointerANGLE },
 #endif /* EGL_ANGLE_query_surface_pointer */
+#ifdef EGL_KHR_lock_surface
+      { "eglLockSurfaceKHR", (_EGLProc) eglLockSurfaceKHR },
+      { "eglUnlockSurfaceKHR", (_EGLProc) eglUnlockSurfaceKHR },
+#endif /* EGL_KHR_lock_surface */
 #ifdef EGL_MESA_screen_surface
       { "eglChooseModeMESA", (_EGLProc) eglChooseModeMESA },
       { "eglGetModesMESA", (_EGLProc) eglGetModesMESA },
@@ -984,6 +988,117 @@ eglGetProcAddress(const char *procname)
    RETURN_EGL_SUCCESS(NULL, ret);
 }
 
+#ifdef EGL_KHR_lock_surface
+
+EGLBoolean EGLAPIENTRY
+eglLockSurfaceKHR(EGLDisplay dpy, EGLSurface surface,
+                  const EGLint *attrib_list)
+{
+   _EGLDisplay *disp = _eglLockDisplay(dpy);
+   _EGLSurface *surf = _eglLookupSurface(surface, disp);
+   _EGLDriver *drv;
+   EGLint usage_hint = EGL_READ_SURFACE_BIT_KHR | EGL_WRITE_SURFACE_BIT_KHR;
+   EGLint preserve_pixels = EGL_FALSE;
+
+   _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
+
+   /* The EGL_KHR_lock_surface extension says:
+    *
+    *     "On failure, the surface is unaffected and eglLockSurfaceKHR returns
+    *     EGL_FALSE. An EGL_BAD_ACCESS error is generated if any of these
+    *     condition, are true:
+    *
+    *     * <surface> was created with an EGLConfig whose
+    *       EGL_SURFACE_TYPE attribute does not contain
+    *       EGL_LOCK_SURFACE_BIT_KHR.
+    *     * <surface> is already locked.
+    *     * Any client API is current to <surface>.
+    */
+   if (!disp->Extensions.KHR_lock_surface
+       || (surf->Config->RenderableType & EGL_LOCK_SURFACE_BIT_KHR) == 0
+       || surf->Locked
+       || surf->CurrentContext != NULL)
+      RETURN_EGL_ERROR(disp, EGL_BAD_ACCESS, EGL_FALSE);
+
+   if (attrib_list != NULL) {
+      unsigned i;
+
+      for (i = 0; attrib_list[i] != EGL_NONE; i += 2) {
+         switch (attrib_list[i]) {
+         case EGL_MAP_PRESERVE_PIXELS_KHR:
+            if (attrib_list[i+1] != EGL_TRUE
+                && attrib_list[i+1] != EGL_FALSE)
+               RETURN_EGL_ERROR(disp, EGL_BAD_ATTRIBUTE, EGL_FALSE);
+
+            preserve_pixels = attrib_list[i+1];
+            break;
+         case EGL_LOCK_USAGE_HINT_KHR: {
+            const EGLint invalid_mask = ~(EGL_READ_SURFACE_BIT_KHR
+                                          | EGL_WRITE_SURFACE_BIT_KHR);
+            if ((attrib_list[i+1] & invalid_mask) != 0)
+               RETURN_EGL_ERROR(disp, EGL_BAD_ATTRIBUTE, EGL_FALSE);
+
+            usage_hint = attrib_list[i+1];
+            break;
+         }
+         default:
+            RETURN_EGL_ERROR(disp, EGL_BAD_ATTRIBUTE, EGL_FALSE);
+         }
+      }
+   }
+
+   surf->Locked = EGL_TRUE;
+   surf->Mapped = EGL_FALSE;
+   surf->MappedPointer = NULL;
+   surf->MappedPitch = 0;
+   surf->MapUsageHint = usage_hint;
+   surf->MapPreservePixels = preserve_pixels;
+
+   RETURN_EGL_SUCCESS(disp, EGL_TRUE);
+}
+
+EGLBoolean EGLAPIENTRY
+eglUnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
+{
+   _EGLDisplay *disp = _eglLockDisplay(dpy);
+   _EGLSurface *surf = _eglLookupSurface(surface, disp);
+   _EGLDriver *drv;
+   EGLBoolean ret;
+
+   _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
+
+   /* The EGL_KHR_lock_surface extension says:
+    *
+    *     "On failure, eglUnlockSurfaceKHR returns EGL_FALSE. An
+    *     EGL_BAD_ACCESS error is generated if any of these conditions are
+    *     true:
+    *
+    *     * <surface> is already unlocked.
+    *     * A display mode change occurred while the surface was locked, and
+    *       the implementation was unable to reflect mapped buffer
+    *       state(fn). In this case, <surface> will still be unlocked.
+    *       However, the contents of the previously mapped buffers of
+    *       <surface> become undefined, rather than reflecting changes made in
+    *       the mapped buffers in client memory."
+    *
+    * This code relies on the back-end UnmapSurface function to detect the
+    * second case and return EGL_FALSE.
+    */
+   if (!surf->Locked)
+      RETURN_EGL_ERROR(disp, EGL_BAD_ACCESS, EGL_FALSE);
+
+   if (surf->Mapped)
+      ret = drv->API.UnmapSurface(drv, disp, surf);
+
+   surf->Locked = EGL_FALSE;
+   surf->Mapped = EGL_FALSE;
+   surf->MappedPointer = NULL;
+   surf->MappedPitch = 0;
+
+   RETURN_EGL_ERROR(disp, ret ? EGL_SUCCESS : EGL_BAD_ACCESS, ret);
+}
+
+#endif /* EGL_KHR_lock_surface */
 
 #ifdef EGL_MESA_screen_surface
 
