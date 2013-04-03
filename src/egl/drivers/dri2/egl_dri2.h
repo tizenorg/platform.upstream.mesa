@@ -101,6 +101,7 @@ struct dri2_egl_display
    __DRIimageExtension      *image;
    __DRIrobustnessExtension *robustness;
    __DRI2configQueryExtension *config;
+   __DRImapDrawableExtension *mapDrawable;
    int                       fd;
 
    int                       own_device;
