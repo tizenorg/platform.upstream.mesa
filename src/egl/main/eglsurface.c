@@ -415,6 +415,29 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
          goto bad_attribute;
       *value = drv->API.QueryBufferAge(drv, dpy, surface);
       break;
+   case EGL_BITMAP_POINTER_KHR: {
+      void *ptr;
+      EGLBoolean err;
+
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      /* The EGL_KHR_lock_surface2 extension spec says:
+       *
+       *     "... If <attribute> is either EGL_BITMAP_POINTER_KHR or
+       *     EGL_BITMAP_PITCH_KHR, and either <surface> is not locked using
+       *     eglLockSurfaceKHR, or <surface> is locked but mapping fails,
+       *     then an EGL_BAD_ACCESS error is generated."
+       */
+      if (!surface->Locked) {
+         _eglError(EGL_BAD_ACCESS, "eglQuerySurface");
+         return EGL_FALSE;
+      }
+
+      err = drv->API.QuerySurfacePointer(drv, dpy, surface, attribute, &ptr);
+      *value = (EGLint) (intptr_t) ptr;
+      return err;
+   }
    case EGL_BITMAP_ORIGIN_KHR:
       if (!dpy->Extensions.KHR_lock_surface)
          goto bad_attribute;
@@ -484,10 +507,40 @@ _eglQuerySurfacePointer(_EGLDriver *drv, _EGLDisplay *dpy,
     *     "If an attribute queried via eglQuerySurfacePointerANGLE is not
     *     of type 'pointer', then eglQuerySurfacePointer returns EGL_FALSE
     *     and an EGL_BAD_PARAMETER error is generated."
-    *
-    * There currently aren't any attributes with type pointer, so always
-    * generate the error.
     */
+   switch (attribute) {
+   case EGL_BITMAP_POINTER_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      /* The EGL_KHR_lock_surface2 extension spec says:
+       *
+       *     "... If <attribute> is either EGL_BITMAP_POINTER_KHR or
+       *     EGL_BITMAP_PITCH_KHR, and either <surface> is not locked using
+       *     eglLockSurfaceKHR, or <surface> is locked but mapping fails,
+       *     then an EGL_BAD_ACCESS error is generated."
+       */
+      if (!surface->Locked) {
+         _eglError(EGL_BAD_ACCESS, "eglQuerySurfacePointerANGLE");
+         return EGL_FALSE;
+      }
+
+      if (!surface->Mapped) {
+         if (!drv->API.MapSurface(drv, dpy, surface)) {
+            _eglError(EGL_BAD_ACCESS, "eglQuerySurfacePointerANGLE");
+            return EGL_FALSE;
+         }
+      }
+
+      *value = surface->MappedPointer;
+      break;
+   default:
+      goto bad_attribute;
+   }
+
+   return EGL_TRUE;
+
+bad_attribute:
    _eglError(EGL_BAD_PARAMETER, "eglQuerySurfacePointerANGLE");
    return EGL_FALSE;
 }
