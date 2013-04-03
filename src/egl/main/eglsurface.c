@@ -438,6 +438,31 @@ _eglQuerySurface(_EGLDriver *drv, _EGLDisplay *dpy, _EGLSurface *surface,
       *value = (EGLint) (intptr_t) ptr;
       return err;
    }
+   case EGL_BITMAP_PITCH_KHR:
+      if (!dpy->Extensions.KHR_lock_surface)
+         goto bad_attribute;
+
+      /* The EGL_KHR_lock_surface2 extension spec says:
+       *
+       *     "... If <attribute> is either EGL_BITMAP_POINTER_KHR or
+       *     EGL_BITMAP_PITCH_KHR, and either <surface> is not locked using
+       *     eglLockSurfaceKHR, or <surface> is locked but mapping fails,
+       *     then an EGL_BAD_ACCESS error is generated."
+       */
+      if (!surface->Locked) {
+         _eglError(EGL_BAD_ACCESS, "eglQuerySurface");
+         return EGL_FALSE;
+      }
+
+      if (!surface->Mapped) {
+         if (!drv->API.MapSurface(drv, dpy, surface)) {
+            _eglError(EGL_BAD_ACCESS, "eglQuerySurface");
+            return EGL_FALSE;
+         }
+      }
+
+      *value = surface->MappedPitch;
+      break;
    case EGL_BITMAP_ORIGIN_KHR:
       if (!dpy->Extensions.KHR_lock_surface)
          goto bad_attribute;
