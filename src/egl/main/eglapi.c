@@ -141,8 +141,12 @@
          RETURN_EGL_ERROR(disp, 0, ret);                  \
    } while (0)
 
-#define _EGL_CHECK_SURFACE(disp, surf, ret, drv) \
-   _EGL_CHECK_OBJECT(disp, Surface, surf, ret, drv)
+#define _EGL_CHECK_SURFACE(disp, surf, ret, drv)                        \
+   do {                                                                 \
+      drv = _eglCheckSurface(disp, surf, EGL_TRUE, __FUNCTION__);       \
+      if (!drv)                                                         \
+         RETURN_EGL_ERROR(disp, 0, ret);                                \
+   } while (0)
 
 #define _EGL_CHECK_CONTEXT(disp, context, ret, drv) \
    _EGL_CHECK_OBJECT(disp, Context, context, ret, drv)
@@ -176,13 +180,18 @@ _eglCheckDisplay(_EGLDisplay *disp, const char *msg)
 
 
 static INLINE _EGLDriver *
-_eglCheckSurface(_EGLDisplay *disp, _EGLSurface *surf, const char *msg)
+_eglCheckSurface(_EGLDisplay *disp, _EGLSurface *surf,
+                 EGLBoolean must_be_unlocked, const char *msg)
 {
    _EGLDriver *drv = _eglCheckDisplay(disp, msg);
    if (!drv)
       return NULL;
    if (!surf) {
       _eglError(EGL_BAD_SURFACE, msg);
+      return NULL;
+   }
+   if (must_be_unlocked && surf->Locked) {
+      _eglError(EGL_BAD_ACCESS, msg);
       return NULL;
    }
    return drv;
@@ -602,7 +611,10 @@ eglQuerySurface(EGLDisplay dpy, EGLSurface surface,
    _EGLDriver *drv;
    EGLBoolean ret;
 
-   _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
+   drv = _eglCheckSurface(disp, surface, EGL_FALSE, __FUNCTION__);
+   if (!drv)
+      RETURN_EGL_ERROR(disp, 0, ret);
+
    ret = drv->API.QuerySurface(drv, disp, surf, attribute, value);
 
    RETURN_EGL_EVAL(disp, ret);
@@ -619,7 +631,10 @@ eglQuerySurfacePointerANGLE(EGLDisplay dpy, EGLSurface surface,
    _EGLDriver *drv;
    EGLBoolean ret;
 
-   _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
+   drv = _eglCheckSurface(disp, surface, EGL_FALSE, __FUNCTION__);
+   if (!drv)
+      RETURN_EGL_ERROR(disp, 0, ret);
+
    ret = drv->API.QuerySurfacePointer(drv, disp, surf, attribute, value);
 
    RETURN_EGL_EVAL(disp, ret);
@@ -1097,7 +1112,9 @@ eglUnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
    _EGLDriver *drv;
    EGLBoolean ret;
 
-   _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
+   drv = _eglCheckSurface(disp, surface, EGL_FALSE, __FUNCTION__);
+   if (!drv)
+      RETURN_EGL_ERROR(disp, 0, ret);
 
    /* The EGL_KHR_lock_surface extension says:
     *
