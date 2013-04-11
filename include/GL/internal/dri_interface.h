@@ -547,6 +547,7 @@ struct __DRIuseInvalidateExtensionRec {
 #define __DRI_ATTRIB_BIND_TO_TEXTURE_TARGETS	46
 #define __DRI_ATTRIB_YINVERTED			47
 #define __DRI_ATTRIB_FRAMEBUFFER_SRGB_CAPABLE	48
+#define __DRI_ATTRIB_MAPPABLE                   49 /**< Added by DRI_MapDrawable*/
 
 /* __DRI_ATTRIB_RENDER_TYPE */
 #define __DRI_ATTRIB_RGBA_BIT			0x01	
@@ -1184,6 +1185,59 @@ struct __DRI2configQueryExtensionRec {
 typedef struct __DRIrobustnessExtensionRec __DRIrobustnessExtension;
 struct __DRIrobustnessExtensionRec {
    __DRIextension base;
+};
+
+/**
+ * Get a pointer to the pixels of a drawable
+ *
+ * This is used, for example, to implement the mapping and unmapping
+ * operations for EGL_KHR_lock_surface and related extensions.  Note that the
+ * "mapping" may or may not be an actual mapping of the framebuffer.  It may
+ * be a copy.
+ */
+#define __DRI2_MAPDRAWABLE "DRI_MapDrawable"
+#define __DRI2_MAPDRAWABLE_VERSION 1
+
+typedef struct __DRImapDrawableExtensionRec __DRImapDrawableExtension;
+struct __DRImapDrawableExtensionRec {
+   __DRIextension base;
+
+   int (*mapDrawable)(
+      /** Drawable that is to be mapped. */
+      __DRIdrawable *drawable,
+
+      /**
+       * Storage to hold a pointer to the mapping.
+       *
+       * The pointer returned here is the lowest address containing data.
+       * Applications can only access positive offsets of this address.
+       */
+      void **ptr,
+
+      /**
+       * Storage to hold the byte-pitch of the mapped drawable.
+       *
+       * The orientation (y=0 at the top or bottom) and pixel format of the
+       * drawable are assumed to be queriable through other means.
+       */
+      unsigned *byte_pitch,
+
+      /** Hint as to whether or not the application will read the buffer. */
+      GLboolean read_mapping_hint,
+
+      /** Hint as to whether or not the application will write the buffer. */
+      GLboolean write_mapping_hint,
+
+      /**
+       * Flag whether the mapping will contain the contents of the buffer or
+       * zeroes.
+       *
+       * \note
+       * This flag is a requirement, \b not a hint.
+       */
+      GLboolean preserve_contents);
+
+   int (*unmapDrawable)(__DRIdrawable *drawable);
 };
 
 #endif
