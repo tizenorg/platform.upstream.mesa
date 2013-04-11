@@ -243,7 +243,10 @@ static const struct {
    /* extensions */
    { EGL_Y_INVERTED_NOK,            ATTRIB_TYPE_BOOLEAN,
                                     ATTRIB_CRITERION_EXACT,
-                                    EGL_DONT_CARE }
+                                    EGL_DONT_CARE },
+   { EGL_MATCH_FORMAT_KHR,          ATTRIB_TYPE_INTEGER,
+                                    ATTRIB_CRITERION_SPECIAL,
+                                    EGL_DONT_CARE },
 };
 
 
