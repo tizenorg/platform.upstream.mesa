@@ -286,7 +286,6 @@ intel_miptree_create_layout(struct intel_context *intel,
 				    &mt->align_w, &mt->align_h);
 
 #ifdef I915
-   (void) intel;
    if (intel->is_945)
       i945_miptree_layout(mt);
    else
