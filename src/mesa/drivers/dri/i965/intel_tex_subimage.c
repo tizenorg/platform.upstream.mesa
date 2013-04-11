@@ -108,7 +108,7 @@ intel_blit_texsubimage(struct gl_context * ctx,
       _mesa_error(ctx, GL_OUT_OF_MEMORY, "intelTexSubImage");
    }
 
-   intel_miptree_unmap_raw(brw, temp_mt);
+   intel_miptree_unmap_raw(temp_mt);
 
    bool ret;
 

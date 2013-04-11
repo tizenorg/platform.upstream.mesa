@@ -700,8 +700,7 @@ void brw_miptree_layout(struct brw_context *brw, struct intel_mipmap_tree *mt);
 void *intel_miptree_map_raw(struct brw_context *brw,
                             struct intel_mipmap_tree *mt);
 
-void intel_miptree_unmap_raw(struct brw_context *brw,
-                             struct intel_mipmap_tree *mt);
+void intel_miptree_unmap_raw(struct intel_mipmap_tree *mt);
 
 void
 intel_miptree_map(struct brw_context *brw,

@@ -1182,7 +1182,7 @@ intel_miptree_alloc_mcs(struct brw_context *brw,
     */
    void *data = intel_miptree_map_raw(brw, mt->mcs_mt);
    memset(data, 0xff, mt->mcs_mt->region->bo->size);
-   intel_miptree_unmap_raw(brw, mt->mcs_mt);
+   intel_miptree_unmap_raw(mt->mcs_mt);
 
    return mt->mcs_mt;
 }
@@ -1644,8 +1644,7 @@ intel_miptree_map_raw(struct brw_context *brw, struct intel_mipmap_tree *mt)
 }
 
 void
-intel_miptree_unmap_raw(struct brw_context *brw,
-                        struct intel_mipmap_tree *mt)
+intel_miptree_unmap_raw(struct intel_mipmap_tree *mt)
 {
    drm_intel_bo_unmap(mt->region->bo);
 }
@@ -1699,7 +1698,7 @@ intel_miptree_unmap_gtt(struct brw_context *brw,
 			unsigned int level,
 			unsigned int slice)
 {
-   intel_miptree_unmap_raw(brw, mt);
+   intel_miptree_unmap_raw(mt);
 }
 
 static void
@@ -1754,7 +1753,7 @@ intel_miptree_unmap_blit(struct brw_context *brw,
 {
    struct gl_context *ctx = &brw->ctx;
 
-   intel_miptree_unmap_raw(brw, map->mt);
+   intel_miptree_unmap_raw(map->mt);
 
    if (map->mode & GL_MAP_WRITE_BIT) {
       bool ok = intel_miptree_blit(brw,
@@ -1802,7 +1801,7 @@ intel_miptree_map_s8(struct brw_context *brw,
 	 }
       }
 
-      intel_miptree_unmap_raw(brw, mt);
+      intel_miptree_unmap_raw(mt);
 
       DBG("%s: %d,%d %dx%d from mt %p %d,%d = %p/%d\n", __FUNCTION__,
 	  map->x, map->y, map->w, map->h,
@@ -1838,7 +1837,7 @@ intel_miptree_unmap_s8(struct brw_context *brw,
 	 }
       }
 
-      intel_miptree_unmap_raw(brw, mt);
+      intel_miptree_unmap_raw(mt);
    }
 
    free(map->buffer);
@@ -1892,7 +1891,7 @@ intel_miptree_unmap_etc(struct brw_context *brw,
                                map->ptr, map->stride,
                                map->w, map->h, mt->etc_format);
 
-   intel_miptree_unmap_raw(brw, mt);
+   intel_miptree_unmap_raw(mt);
    free(map->buffer);
 }
 
@@ -1962,8 +1961,8 @@ intel_miptree_map_depthstencil(struct brw_context *brw,
 	 }
       }
 
-      intel_miptree_unmap_raw(brw, s_mt);
-      intel_miptree_unmap_raw(brw, z_mt);
+      intel_miptree_unmap_raw(s_mt);
+      intel_miptree_unmap_raw(z_mt);
 
       DBG("%s: %d,%d %dx%d from z mt %p %d,%d, s mt %p %d,%d = %p/%d\n",
 	  __FUNCTION__,
@@ -2022,8 +2021,8 @@ intel_miptree_unmap_depthstencil(struct brw_context *brw,
 	 }
       }
 
-      intel_miptree_unmap_raw(brw, s_mt);
-      intel_miptree_unmap_raw(brw, z_mt);
+      intel_miptree_unmap_raw(s_mt);
+      intel_miptree_unmap_raw(z_mt);
 
       DBG("%s: %d,%d %dx%d from z mt %p (%s) %d,%d, s mt %p %d,%d = %p/%d\n",
 	  __FUNCTION__,
