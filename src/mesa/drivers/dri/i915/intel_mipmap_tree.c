@@ -116,7 +116,6 @@ intel_miptree_create_layout(struct intel_context *intel,
    intel_get_texture_alignment_unit(intel, mt->format,
 				    &mt->align_w, &mt->align_h);
 
-   (void) intel;
    if (intel->is_945)
       i945_miptree_layout(mt);
    else
