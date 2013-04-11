@@ -7,6 +7,7 @@
     <device screen="0" driver="i965">
         <application name="Default">
             <option name="vblank_mode" value="0" />
+            <option name="force_s3tc_enable" value="true" />
         </application>
     </device>
     <device screen="0" driver="r300">
