@@ -200,7 +200,7 @@ intel_tex_unmap_image_for_swrast(struct intel_context *intel,
 				 struct intel_texture_image *intel_image)
 {
    if (intel_image && intel_image->mt) {
-      intel_miptree_unmap_raw(intel, intel_image->mt);
+      intel_miptree_unmap_raw(intel_image->mt);
       intel_image->base.Map = NULL;
    }
 }
