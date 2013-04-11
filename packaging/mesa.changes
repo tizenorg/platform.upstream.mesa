@@ -1,3 +1,6 @@
+* Thu Apr 11 2013 Patrick McCarty <patrick.mccarty@linux.intel.com> be7000c
+- (TZPC-1506) Set force_s3tc_enable to true for i965
+
 * Fri Mar 22 2013 Anas Nashif <anas.nashif@intel.com> mesa-9.1.1@683a9e9
 - Update to 9.1.1
 
