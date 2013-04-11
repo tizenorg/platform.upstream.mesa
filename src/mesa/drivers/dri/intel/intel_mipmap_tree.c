@@ -1377,11 +1377,7 @@ intel_miptree_map_gtt(struct intel_context *intel,
 }
 
 static void
-intel_miptree_unmap_gtt(struct intel_context *intel,
-			struct intel_mipmap_tree *mt,
-			struct intel_miptree_map *map,
-			unsigned int level,
-			unsigned int slice)
+intel_miptree_unmap_gtt(struct intel_mipmap_tree *mt)
 {
    intel_miptree_unmap_raw(mt);
 }
@@ -1897,7 +1893,7 @@ intel_miptree_unmap_singlesample(struct intel_context *intel,
    } else if (map->bo) {
       intel_miptree_unmap_blit(intel, mt, map, level, slice);
    } else {
-      intel_miptree_unmap_gtt(intel, mt, map, level, slice);
+      intel_miptree_unmap_gtt(mt);
    }
 
    intel_miptree_release_map(mt, level, slice);
