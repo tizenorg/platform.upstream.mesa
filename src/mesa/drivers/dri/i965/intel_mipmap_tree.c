@@ -1633,7 +1633,8 @@ intel_miptree_map_raw(struct brw_context *brw, struct intel_mipmap_tree *mt)
       }
    }
 
-   intel_flush(ctx);
+   if (ctx != NULL)
+     intel_flush(ctx);
 
    if (mt->region->tiling != I915_TILING_NONE)
       drm_intel_gem_bo_map_gtt(bo);
