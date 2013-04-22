@@ -729,9 +729,11 @@ eglSwapBuffers(EGLDisplay dpy, EGLSurface surface)
    _EGL_CHECK_SURFACE(disp, surf, EGL_FALSE, drv);
 
    /* surface must be bound to current context in EGL 1.4 */
+#if 0
    if (_eglGetContextHandle(ctx) == EGL_NO_CONTEXT ||
        surf != ctx->DrawSurface)
       RETURN_EGL_ERROR(disp, EGL_BAD_SURFACE, EGL_FALSE);
+#endif
 
    ret = drv->API.SwapBuffers(drv, disp, surf);
 
