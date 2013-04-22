@@ -445,6 +445,13 @@ struct gl_config
 
    /* EXT_framebuffer_sRGB */
    GLint sRGBCapable;
+
+   /**
+    * Is the framebuffer mappable?
+    *
+    * \since EGL_KHR_lock_surface
+    */
+   GLboolean mappable;
 };
 
 
