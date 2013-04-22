@@ -97,6 +97,8 @@ struct _egl_config
 
    /* extensions */
    EGLint YInvertedNOK;
+
+   EGLint MatchFormat;
 };
 
 
@@ -144,6 +146,7 @@ _eglOffsetOfConfig(EGLint attr)
    ATTRIB_MAP(EGL_CONFORMANT,                Conformant);
    /* extensions */
    ATTRIB_MAP(EGL_Y_INVERTED_NOK,            YInvertedNOK);
+   ATTRIB_MAP(EGL_MATCH_FORMAT_KHR,          MatchFormat);
 #undef ATTRIB_MAP
    default:
       return -1;

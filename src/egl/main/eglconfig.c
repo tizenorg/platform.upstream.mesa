@@ -66,6 +66,7 @@ _eglInitConfig(_EGLConfig *conf, _EGLDisplay *dpy, EGLint id)
    conf->TransparentType = EGL_NONE;
    conf->NativeVisualType = EGL_NONE;
    conf->ColorBufferType = EGL_RGB_BUFFER;
+   conf->MatchFormat = EGL_NONE;
 }
 
 
@@ -284,6 +285,33 @@ _eglValidateConfig(const _EGLConfig *conf, EGLBoolean for_matching)
             if (val > 1 || val < 0)
                valid = EGL_FALSE;
             break;
+         case EGL_MATCH_FORMAT_KHR:
+            /* This implementation of the extension only allows support of the
+             * exact formats.  The specification is really sketchy about other
+             * formats.  I can barely even parse what it's saying.
+             *
+             * The EGL_KHR_lock_surface2 extension spec says:
+             *
+             *     "Querying the EGL_MATCH_FORMAT_KHR attribute results in
+             *     EGL_NONE for an EGLConfig that is not lockable, one of the
+             *     "exact" formats (EGL_FORMAT_RGB_565_EXACT_KHR,
+             *     EGL_FORMAT_RGBA_8888_EXACT_KHR) if the color buffer matches
+             *     that format when mapped with eglLockSurface, or for any
+             *     other format a value that is not EGL_NONE or EGL_DONT_CARE
+             *     but is otherwise undefined. In particular, the color buffer
+             *     format matching one of the "inexact" formats does not
+             *     guarantee that that EGL_FORMAT_* value is returned."
+             *
+             * Internally we use 0 for the "otherwise undefined" case.
+             */
+            if (val != EGL_NONE
+                && val != EGL_FORMAT_RGB_565_EXACT_KHR
+                && val != EGL_FORMAT_RGB_565_KHR
+                && val != EGL_FORMAT_RGBA_8888_EXACT_KHR
+                && val != EGL_FORMAT_RGBA_8888_KHR
+                && val != 0)
+               valid = EGL_FALSE;
+            break;
          default:
             if (val < 0)
                valid = EGL_FALSE;
@@ -335,7 +363,8 @@ _eglValidateConfig(const _EGLConfig *conf, EGLBoolean for_matching)
                    EGL_OPENVG_BIT |
                    EGL_OPENGL_ES2_BIT |
                    EGL_OPENGL_ES3_BIT_KHR |
-                   EGL_OPENGL_BIT;
+                   EGL_OPENGL_BIT |
+                   EGL_LOCK_SURFACE_BIT_KHR;
             break;
          default:
             assert(0);
