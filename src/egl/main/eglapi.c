@@ -504,6 +504,10 @@ eglMakeCurrent(EGLDisplay dpy, EGLSurface draw, EGLSurface read,
          RETURN_EGL_ERROR(disp, EGL_BAD_MATCH, EGL_FALSE);
    }
 
+   if ((draw_surf != NULL && draw_surf->Locked)
+       || (read_surf != NULL && read_surf->Locked))
+      RETURN_EGL_ERROR(disp, EGL_BAD_ACCESS, EGL_FALSE);
+
    ret = drv->API.MakeCurrent(drv, disp, draw_surf, read_surf, context);
 
    RETURN_EGL_EVAL(disp, ret);
