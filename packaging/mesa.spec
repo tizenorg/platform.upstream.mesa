@@ -1,11 +1,11 @@
 %define glamor 1
 %bcond_without wayland
 
-%define _version 9.1.1
+%define _version 9.1.3
 %define _name_archive MesaLib
 
 Name:           mesa
-Version:        9.1.1
+Version:        9.1.3
 Release:        0
 BuildRequires: gettext-tools
 BuildRequires: makedepend
