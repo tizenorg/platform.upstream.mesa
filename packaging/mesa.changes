@@ -1,0 +1,27 @@
+* Thu Jun 06 2013 Rusty Lynch <rusty.lynch@intel.com> 215c784
+- Update to experimental lock_surface branch for testing 
+
+* Wed May 29 2013 Anas Nashif <anas.nashif@intel.com> mesa-9.1.3@e788265
+- Update to 9.1.3
+
+* Thu Apr 11 2013 Patrick McCarty <patrick.mccarty@linux.intel.com> be7000c
+- (TZPC-1506) Set force_s3tc_enable to true for i965
+
+* Fri Mar 22 2013 Anas Nashif <anas.nashif@intel.com> mesa-9.1.1@683a9e9
+- Update to 9.1.1
+
+* Thu Feb 21 2013 Anas Nashif <anas.nashif@intel.com> mesa-9.0.3@1ff6f14
+- Update to 9.0.3
+
+* Mon Feb 11 2013 Anas Nashif <anas.nashif@intel.com> submit/trunk/20130211.160733@eace5e8
+- readd baselibs.conf
+
+* Mon Feb 11 2013 Anas Nashif <anas.nashif@intel.com> mesa-9.0.2@77e0bd1
+- Update to 9.0.2
+
+* Tue Dec 11 2012 Anas Nashif <anas.nashif@intel.com> mesa-9.0.1@8b3e302
+- actually use bcond_without to enable wayland by default
+
+* Tue Dec 11 2012 Anas Nashif <anas.nashif@intel.com> mesa-9.0.1@95d2ec0
+- Update to 9.0.1
+
