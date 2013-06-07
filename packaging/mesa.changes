@@ -1,3 +1,6 @@
+* Fri Jun 07 2013 Anas Nashif <anas.nashif@intel.com> submit/tizen/20130607.210130@2c9720b
+- fixed typo in macro
+
 * Fri Jun 07 2013 Anas Nashif <anas.nashif@intel.com> submit/tizen/20130529.141302@8173244
 - do not build wayland by default, use config option from project
 
