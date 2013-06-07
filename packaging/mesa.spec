@@ -1,5 +1,5 @@
 %define glamor 1
-%bcond_out wayland
+%bcond_with wayland
 
 %define _version 9.1.3
 %define _name_archive MesaLib
