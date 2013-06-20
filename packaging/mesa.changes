@@ -1,3 +1,6 @@
+* Thu Jun 20 2013 Rusty Lynch <rusty.lynch@intel.com> accepted/tizen/20130608.043157@6dfee4d
+- i965: Enable the Bay Trail platform.
+
 * Fri Jun 07 2013 Anas Nashif <anas.nashif@intel.com> submit/tizen/20130607.210130@2c9720b
 - fixed typo in macro
 
