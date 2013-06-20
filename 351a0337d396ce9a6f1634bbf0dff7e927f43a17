@@ -1,0 +1,8 @@
+Change-Id: I351a0337d396ce9a6f1634bbf0dff7e927f43a17
+Code-Review+2: Rusty Lynch <rusty.lynch@intel.com>
+Verified+1: Rusty Lynch <rusty.lynch@intel.com>
+Submitted-by: Rusty Lynch <rusty.lynch@intel.com>
+Submitted-at: Thu, 20 Jun 2013 08:28:36 -0700
+Reviewed-on: https://review.tizen.org/gerrit/4160
+Project: platform/upstream/mesa
+Branch: refs/heads/tizen
