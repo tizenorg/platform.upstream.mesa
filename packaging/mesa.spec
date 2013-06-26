@@ -50,7 +50,7 @@ Source2:        baselibs.conf
 Source3:        README.updates
 Source5:        drirc
 Source6:        %name-rpmlintrc
-Provides:	Mesa = %version
+Provides:		Mesa = %version
 
 %description
 Mesa is a 3-D graphics library with an API which is very similar to
@@ -104,6 +104,15 @@ Group:		Graphics/Libraries
 
 %description -n libwayland-egl
 Wayland EGL backend for Mesa.
+
+%package -n libwayland-egl-devel
+Summary:    Mesa libwayland-egl development package
+Group:      Development/Libraries
+Requires:   libwayland-egl = %{version}-%{release}
+Provides:   libwayland-egl-devel
+
+%description -n libwayland-egl-devel
+Mesa libwayland-egl library development package
 
 %package -n mesa-libEGL
 # Kudos to Debian for the descriptions
@@ -547,6 +556,11 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %files -n libwayland-egl
 %defattr(-,root,root)
 %_libdir/libwayland-egl.so.1*
+
+%files -n libwayland-egl-devel
+%defattr(-,root,root,-)
+%{_libdir}/libwayland-egl.so
+%{_libdir}/pkgconfig/wayland-egl.pc
 %endif
 
 %files -n libgbm
