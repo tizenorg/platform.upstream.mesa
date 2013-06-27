@@ -1,0 +1,8 @@
+Change-Id: Ie7e18f2e5789ece88d18d092c1c7d82858bb700b
+Code-Review+2: Wang Quanxian <quanxian.wang@intel.com>
+Verified+1: Wang Quanxian <quanxian.wang@intel.com>
+Submitted-by: Wang Quanxian <quanxian.wang@intel.com>
+Submitted-at: Wed, 26 Jun 2013 21:15:10 -0700
+Reviewed-on: https://review.tizen.org/gerrit/4189
+Project: platform/upstream/mesa
+Branch: refs/heads/tizen
