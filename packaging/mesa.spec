@@ -50,6 +50,7 @@ Source2:        baselibs.conf
 Source3:        README.updates
 Source5:        drirc
 Source6:        %name-rpmlintrc
+Source1001: 	mesa.manifest
 Provides:	Mesa = %version
 
 %description
@@ -363,6 +364,7 @@ packages.
 
 %prep
 %setup -n MesaLib-%{_version}  -q
+cp %{SOURCE1001} .
 
 rm -rf docs/README.{VMS,WIN32,OS2}
 
@@ -482,6 +484,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %postun -n mesa-libglapi -p /sbin/ldconfig
 
 %files
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %license docs/COPYING
 %config /etc/drirc
@@ -489,10 +492,12 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %_libdir/libdricore9*.so.*
 
 %files -n mesa-libEGL
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libEGL.so.1*
 
 %files -n mesa-libEGL-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/EGL
 %_includedir/KHR
@@ -500,10 +505,12 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %_libdir/pkgconfig/egl.pc
 
 %files -n mesa-libGL
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libGL.so.1*
 
 %files -n mesa-libGL-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %dir %_includedir/GL
 %_includedir/GL/*.h
@@ -511,20 +518,24 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %_libdir/pkgconfig/gl.pc
 
 %files -n mesa-libGLESv1_CM
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libGLESv1_CM.so.1*
 
 %files -n mesa-libGLESv1_CM-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/GLES
 %_libdir/libGLESv1_CM.so
 %_libdir/pkgconfig/glesv1_cm.pc
 
 %files -n mesa-libGLESv2
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libGLESv2.so.2*
 
 %files -n mesa-libGLESv2-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/GLES2
 %_libdir/libGLESv2.so
@@ -532,28 +543,34 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 
 
 %files -n mesa-libIndirectGL
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libIndirectGL.so.1*
 
 %files -n mesa-libIndirectGL-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libIndirectGL.so
 
 %files -n libOSMesa
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libOSMesa.so.8*
 
 %if %{with wayland}
 %files -n libwayland-egl
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libwayland-egl.so.1*
 %endif
 
 %files -n libgbm
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libgbm.so.1*
 
 %files -n libgbm-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/gbm.h
 %_libdir/libgbm.so
@@ -562,10 +579,12 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %ifnarch %arm
 
 %files -n libxatracker
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libxatracker.so.1*
 
 %files -n libxatracker-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/xa_*.h
 %_libdir/libxatracker.so
@@ -573,6 +592,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 
 
 %files -n libXvMC_softpipe
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libXvMCsoftpipe.so
 %_libdir/libXvMCsoftpipe.so.1
@@ -581,10 +601,12 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %endif
 
 %files -n mesa-libglapi
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_libdir/libglapi.so.0*
 
 %files devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/GL/internal
 %_libdir/libOSMesa.so
@@ -598,6 +620,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 %_libdir/libdricore9*.so
 
 %files -n mesa-libGLESv3-devel
+%manifest %{name}.manifest
 %defattr(-,root,root)
 %_includedir/GLES3
 
