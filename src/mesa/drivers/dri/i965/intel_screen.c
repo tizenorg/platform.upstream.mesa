@@ -748,11 +748,73 @@ static struct __DRIimageExtensionRec intelImageExtension = {
     .createImageFromFds                 = intel_create_image_from_fds
 };
 
+static int
+intelMapDrawable(__DRIdrawable *drawable,
+                 void **ptr,
+                 unsigned *byte_pitch,
+                 GLboolean read_mapping_hint,
+                 GLboolean write_mapping_hint,
+                 GLboolean preserve_contents)
+{
+   (void) read_mapping_hint;
+   (void) write_mapping_hint;
+   (void) preserve_contents;
+
+   struct gl_framebuffer *const fb =
+      (struct gl_framebuffer *) drawable->driverPrivate;
+
+   if (fb == NULL)
+      return -1;
+
+   struct intel_renderbuffer *const irb =
+      intel_renderbuffer(fb->_ColorDrawBuffers[0]);
+
+   if (irb == NULL || irb->mt == NULL)
+      return -1;
+
+   void *const base = intel_miptree_map_raw(NULL, irb->mt);
+
+   if (base != NULL) {
+      *ptr = base + irb->mt->offset;
+      *byte_pitch = irb->mt->region->pitch;
+      return 0;
+   }
+
+   return -1;
+}
+
+static int
+intelUnmapDrawable(__DRIdrawable *drawable)
+{
+   struct gl_framebuffer *const fb =
+      (struct gl_framebuffer *) drawable->driverPrivate;
+
+   if (fb == NULL)
+      return -1;
+
+   struct intel_renderbuffer *const irb =
+      intel_renderbuffer(fb->_ColorDrawBuffers[0]);
+
+   if (irb == NULL || irb->mt == NULL || irb->mt->region->bo->virtual == NULL)
+      return -1;
+
+   intel_miptree_unmap_raw(irb->mt);
+   return 0;
+}
+
+static struct __DRImapDrawableExtensionRec intelMapDrawableExtension = {
+   .base = { __DRI2_MAPDRAWABLE, 1 },
+
+   .mapDrawable = intelMapDrawable,
+   .unmapDrawable = intelUnmapDrawable
+};
+
 static const __DRIextension *intelScreenExtensions[] = {
     &intelTexBufferExtension.base,
     &intelFlushExtension.base,
     &intelImageExtension.base,
     &dri2ConfigQueryExtension.base,
+    &intelMapDrawableExtension.base,
     NULL
 };
 
@@ -1048,6 +1110,15 @@ intel_screen_make_configs(__DRIscreen *dri_screen)
                                      back_buffer_modes, 2,
                                      singlesample_samples, 1,
                                      false);
+
+      for (int j = 0; new_configs[j] != NULL; j++) {
+         /* FINISHME: This should really only be set if the swapMethod is
+          * FINISHME: GLX_SWAP_COPY_OML, but we don't currently support that.
+          */
+         if (new_configs[j]->modes.doubleBufferMode)
+            new_configs[j]->modes.mappable = true;
+      }
+
       configs = driConcatConfigs(configs, new_configs);
    }
 
