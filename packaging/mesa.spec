@@ -306,7 +306,7 @@ programs against the GBM library.
 %package -n libxatracker
 Summary:        XA state tracker
 Group:          Graphics/Libraries
-Version:        1.0.0
+Version:        2.0.0
 Release:        0
 
 %description -n libxatracker
@@ -318,7 +318,7 @@ video driver.
 %package -n libxatracker-devel
 Summary:        Development files for the XA API
 Group:          Development/Libraries
-Version:        1.0.0
+Version:        2.0.0
 Release:        0
 Requires:       libxatracker = %version
 
@@ -563,7 +563,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc $RPM_BUILD_ROOT/etc
 
 %files -n libxatracker
 %defattr(-,root,root)
-%_libdir/libxatracker.so.1*
+%_libdir/libxatracker.so.2*
 
 %files -n libxatracker-devel
 %defattr(-,root,root)
