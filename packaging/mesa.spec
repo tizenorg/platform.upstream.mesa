@@ -44,7 +44,7 @@ BuildRequires:  libXvMC-devel
 Url:            http://www.mesa3d.org
 Summary:        System for rendering interactive 3-D graphics
 License:        MIT
-Group:          Graphics/Libraries
+Group:          Graphics & UI Framework/Hardware Adaptation
 Source:         %{_name_archive}-%{_version}.tar.bz2
 Source2:        baselibs.conf
 Source3:        README.updates
@@ -70,7 +70,6 @@ just Mesa or The Mesa 3-D graphics library.
 
 %package devel
 Summary:        Libraries, includes and more to develop Mesa applications
-Group:          Development/Libraries
 Requires:       mesa = %version
 Requires:       mesa-libEGL-devel = %version
 Requires:       mesa-libGL-devel = %version
@@ -101,7 +100,6 @@ just Mesa or The Mesa 3-D graphics library.
 
 %package -n libwayland-egl
 Summary:	Wayland EGL backend for Mesa
-Group:		Graphics/Libraries
 
 %description -n libwayland-egl
 Wayland EGL backend for Mesa.
@@ -109,7 +107,6 @@ Wayland EGL backend for Mesa.
 %package -n mesa-libEGL
 # Kudos to Debian for the descriptions
 Summary:        Free implementation of the EGL API
-Group:          Graphics/Libraries
 
 %description -n mesa-libEGL
 This package contains the EGL native platform graphics interface
@@ -124,7 +121,6 @@ support.
 
 %package -n mesa-libEGL-devel
 Summary:        Development files for the EGL API
-Group:          Development/Libraries
 Requires:       mesa-libEGL = %version
 # Other requires taken care of by pkgconfig already
 
@@ -140,7 +136,6 @@ programs against the EGL library.
 
 %package -n mesa-libGL
 Summary:        The GL/GLX runtime of the Mesa 3D graphics library
-Group:          Graphics/Libraries
 Requires:       mesa = %version
 
 %description -n mesa-libGL
@@ -155,7 +150,6 @@ the X Window System.
 
 %package -n mesa-libGL-devel
 Summary:        GL/GLX development files of the OpenGL API
-Group:          Development/Libraries
 Requires:       mesa-libGL = %version
 
 %description -n mesa-libGL-devel
@@ -168,7 +162,6 @@ programs with Mesa.
 
 %package -n mesa-libGLESv1_CM
 Summary:        Free implementation of the OpenGL|ES 1.x API
-Group:          Graphics/Libraries
 
 %description -n mesa-libGLESv1_CM
 OpenGL|ES is a cross-platform API for full-function 2D and 3D
@@ -180,7 +173,6 @@ OpenGL|ES 1.x provides an API for fixed-function hardware.
 
 %package -n mesa-libGLESv1_CM-devel
 Summary:        Development files for the EGL API
-Group:          Development/Libraries
 Requires:       mesa-libGLESv1_CM = %version
 Requires:       pkgconfig(egl)
 
@@ -197,7 +189,6 @@ using the OpenGL|ES 1.x APIs.
 
 %package -n mesa-libGLESv2
 Summary:        Free implementation of the OpenGL|ES 2.x API
-Group:          Graphics/Libraries
 
 %description -n mesa-libGLESv2
 OpenGL|ES is a cross-platform API for full-function 2D and 3D
@@ -210,7 +201,6 @@ vertex and fragment shaders.
 
 %package -n mesa-libGLESv2-devel
 Summary:        Development files for the EGL API
-Group:          Development/Libraries
 Requires:       mesa-libGLESv2 = %version
 Requires:       pkgconfig(egl)
 
@@ -228,7 +218,6 @@ applications using the OpenGL|ES 2.x APIs.
 
 %package -n mesa-libGLESv3-devel
 Summary:        Development files for the OpenGL ES 3.x API
-Group:          Development/Libraries
 Requires:       pkgconfig(egl)
 
 %description -n mesa-libGLESv3-devel
@@ -243,7 +232,6 @@ applications using the OpenGL|ES 3.x APIs.
 %package -n mesa-libIndirectGL
 # This is the equivalent to Debian's libgl1-mesa-swx11
 Summary:        Free implementation of the OpenGL API
-Group:          Graphics/Libraries
 
 %description -n mesa-libIndirectGL
 This library provides a pure software rasterizer; it does not provide
@@ -253,7 +241,6 @@ please see Mesa-libGL1.
 
 %package -n mesa-libIndirectGL-devel
 Summary:        Development Files for the free implementation of the OpenGL API
-Group:          Development/Libraries
 Requires:       mesa-libIndirectGL = %version
 
 %description -n mesa-libIndirectGL-devel
@@ -264,7 +251,6 @@ please see Mesa-libGL1.
 
 %package -n libOSMesa
 Summary:        Mesa Off-screen rendering extension
-Group:          Graphics/Libraries
 
 %description -n libOSMesa
 OSmesa is a Mesa extension that allows programs to render to an
@@ -273,7 +259,6 @@ rendering context on an X Server. It uses a pure software renderer.
 
 %package -n libgbm
 Summary:        Generic buffer management API
-Group:          Graphics/Libraries
 # as per gbm.pc
 Version:        0.0.0
 Release:        0
@@ -288,7 +273,6 @@ openwfd.
 
 %package -n libgbm-devel
 Summary:        Development files for the EGL API
-Group:          Development/Libraries
 Version:        0.0.0
 Release:        0
 Requires:       libgbm = %version
@@ -306,7 +290,6 @@ programs against the GBM library.
 
 %package -n libxatracker
 Summary:        XA state tracker
-Group:          Graphics/Libraries
 Version:        1.0.0
 Release:        0
 
@@ -318,7 +301,6 @@ video driver.
 
 %package -n libxatracker-devel
 Summary:        Development files for the XA API
-Group:          Development/Libraries
 Version:        1.0.0
 Release:        0
 Requires:       libxatracker = %version
@@ -335,7 +317,6 @@ programs against the XA state tracker.
 
 %package -n libXvMC_softpipe
 Summary:        Software implementation of XVMC state tracker
-Group:          Graphics/Libraries
 
 %description -n libXvMC_softpipe
 This package contains the Software implementation of the XvMC
@@ -345,7 +326,6 @@ poor video quality, choppy videos and artefacts all over.
 
 %package -n libvdpau_softpipe
 Summary:        Software implementation of XVMC state tracker
-Group:          Graphics/Libraries
 
 %description -n libvdpau_softpipe
 This package contains the Software implementation of the VDPAU
@@ -354,7 +334,6 @@ poor video quality, choppy videos and artefacts all over.
 
 %package -n mesa-libglapi
 Summary:        Free implementation of the GL API
-Group:          Graphics/Libraries
 
 %description -n mesa-libglapi
 The Mesa GL API module is responsible for dispatching all the gl*
