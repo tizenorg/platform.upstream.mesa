@@ -161,7 +161,7 @@ This package includes headers and static libraries for compiling
 programs with Mesa.
 
 %package -n mesa-libGLESv1_CM
-Summary:        Free implementation of the OpenGL|ES 1
+Summary:        Free implementation of the OpenGL|ES 1.x API
 
 %description -n mesa-libGLESv1_CM
 OpenGL|ES is a cross-platform API for full-function 2D and 3D
@@ -188,7 +188,7 @@ This package provides a development environment for building programs
 using the OpenGL|ES 1.x APIs.
 
 %package -n mesa-libGLESv2
-Summary:        Free implementation of the OpenGL|ES 2
+Summary:        Free implementation of the OpenGL|ES 2.x API
 
 %description -n mesa-libGLESv2
 OpenGL|ES is a cross-platform API for full-function 2D and 3D
@@ -217,7 +217,7 @@ This package provides a development environment for building
 applications using the OpenGL|ES 2.x APIs.
 
 %package -n mesa-libGLESv3-devel
-Summary:        Development files for the OpenGL ES 3
+Summary:        Development files for the OpenGL ES 3.x API
 Requires:       pkgconfig(egl)
 
 %description -n mesa-libGLESv3-devel
