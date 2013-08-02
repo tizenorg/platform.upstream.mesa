@@ -1,9 +1,6 @@
 %define glamor 1
 %bcond_with wayland
 
-%define _version 9.1.3
-%define _name_archive MesaLib
-
 Name:           mesa
 Version:        9.1.3
 Release:        0
@@ -11,7 +8,7 @@ License:        MIT
 Summary:        System for rendering interactive 3-D graphics
 Url:            http://www.mesa3d.org
 Group:          Graphics & UI Framework/Hardware Adaptation
-Source:         %{_name_archive}-%{_version}.tar.bz2
+Source:         MesaLib-%{version}.tar.bz2
 Source2:        baselibs.conf
 Source3:        README.updates
 Source5:        drirc
@@ -337,7 +334,7 @@ functions. It is intended to be mainly used by the Mesa-libGLES*
 packages.
 
 %prep
-%setup -n MesaLib-%{_version}  -q
+%setup -q
 cp %{SOURCE1001} .
 
 rm -rf docs/README.{VMS,WIN32,OS2}
