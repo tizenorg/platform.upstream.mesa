@@ -2,7 +2,7 @@
 %bcond_with wayland
 
 Name:           mesa
-Version:        9.1.3
+Version:        9.2.1
 Release:        0
 License:        MIT
 Summary:        System for rendering interactive 3-D graphics
