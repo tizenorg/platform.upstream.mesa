@@ -38,7 +38,7 @@ BuildRequires:  pkgconfig(libudev) > 150
 %if %{with wayland}
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
-%endif
+%else
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(x11-xcb)
 BuildRequires:  pkgconfig(xcb-dri2)
@@ -48,6 +48,7 @@ BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xfixes)
 BuildRequires:  pkgconfig(xvmc)
 BuildRequires:  pkgconfig(xxf86vm)
+%endif
 Provides:       Mesa = %{version}
 
 %description
@@ -72,12 +73,13 @@ Requires:       mesa-libEGL-devel = %{version}
 Requires:       mesa-libGL-devel = %{version}
 Requires:       mesa-libGLESv1_CM-devel = %{version}
 Requires:       mesa-libGLESv2-devel = %{version}
-Requires:       mesa-libIndirectGL = %{version}
 Requires:       mesa-libglapi = %{version}
-Requires:       libOSMesa = %{version}
 Requires:       libgbm-devel
 %if %{with wayland}
 Requires:       libwayland-egl
+%else
+Requires:       mesa-libIndirectGL = %{version}
+Requires:       libOSMesa = %{version}
 %endif
 
 %description devel
@@ -226,6 +228,8 @@ extensions for the special needs of embedded systems.
 This package provides a development environment for building
 applications using the OpenGL|ES 3.x APIs.
 
+%if %{with wayland}
+%else
 %package -n mesa-libIndirectGL
 # This is the equivalent to Debian's libgl1-mesa-swx11
 Summary:        Free implementation of the OpenGL API
@@ -251,6 +255,7 @@ Summary:        Mesa Off-screen rendering extension
 OSmesa is a Mesa extension that allows programs to render to an
 off-screen buffer using the OpenGL API without having to create a
 rendering context on an X Server. It uses a pure software renderer.
+%endif
 
 %package -n libgbm
 # as per gbm.pc
@@ -283,6 +288,8 @@ openwfd.
 This package provides the development environment for compiling
 programs against the GBM library.
 
+%if %{with wayland}
+%else
 %package -n libxatracker
 Version:        1.0.0
 Release:        0
@@ -324,6 +331,7 @@ Summary:        Software implementation of XVMC state tracker
 This package contains the Software implementation of the VDPAU
 state tracker. This is still "work in progress", i.e. expect
 poor video quality, choppy videos and artefacts all over.
+%endif
 
 %package -n mesa-libglapi
 Summary:        Free implementation of the GL API
@@ -347,12 +355,13 @@ autoreconf -fi
 %configure --enable-gles1 \
            --enable-gles2 \
 %if %{with wayland}
-           --with-egl-platforms=x11,drm,wayland \
+           --with-egl-platforms=drm,wayland \
+           --disable-glx \
 %else
            --with-egl-platforms=x11,drm \
+           --enable-xa \
 %endif
            --enable-shared-glapi \
-           --enable-xa \
            --enable-texture-float \
 %if %glamor
            --enable-gbm \
@@ -363,7 +372,10 @@ autoreconf -fi
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
            --with-gallium-drivers="swrast,svga" \
+%if %{with wayland}
+%else
            --enable-xvmc \
+%endif
 %endif
 %ifarch %arm
            --with-dri-drivers=swrast \
@@ -372,6 +384,9 @@ autoreconf -fi
            CFLAGS="%{optflags} -DNDEBUG"
 make %{?_smp_mflags}
 %make_install
+
+%if %{with wayland}
+%else
 # build and install Indirect Rendering only libGL
 
 make clean
@@ -391,6 +406,7 @@ cp -a \
 install -m 644 src/mesa/drivers/osmesa/osmesa.pc \
    %{buildroot}%{_libdir}/pkgconfig
 
+%endif
 # DRI driver update mechanism
 mkdir -p %{buildroot}%{_libdir}/dri/updates
 install -m 644 $RPM_SOURCE_DIR/README.updates \
@@ -424,6 +440,8 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libGLESv2 -p /sbin/ldconfig
 
+%if %{with wayland}
+%else
 %post   -n mesa-libIndirectGL -p /sbin/ldconfig
 
 %postun -n mesa-libIndirectGL -p /sbin/ldconfig
@@ -432,12 +450,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n libOSMesa -p /sbin/ldconfig
 
-%post   -n libgbm -p /sbin/ldconfig
-
-%postun -n libgbm -p /sbin/ldconfig
-
 %ifnarch  %arm
-
 %post   -n libxatracker -p /sbin/ldconfig
 
 %postun -n libxatracker -p /sbin/ldconfig
@@ -449,6 +462,12 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %postun -n libXvMC_softpipe -p /sbin/ldconfig
 
 %endif
+
+%endif
+
+%post   -n libgbm -p /sbin/ldconfig
+
+%postun -n libgbm -p /sbin/ldconfig
 
 %post   -n mesa-libglapi -p /sbin/ldconfig
 
@@ -475,17 +494,23 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libEGL.so
 %{_libdir}/pkgconfig/egl.pc
 
+%if %{with wayland}
+%else
 %files -n mesa-libGL
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libGL.so.1*
+%endif
 
 %files -n mesa-libGL-devel
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %dir %{_includedir}/GL
 %{_includedir}/GL/*.h
+%if %{with wayland}
+%else
 %{_libdir}/libGL.so
+%endif
 %{_libdir}/pkgconfig/gl.pc
 
 %files -n mesa-libGLESv1_CM
@@ -512,7 +537,14 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libGLESv2.so
 %{_libdir}/pkgconfig/glesv2.pc
 
+%if %{with wayland}
 
+%files -n libwayland-egl
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_libdir}/libwayland-egl.so.1*
+
+%else
 %files -n mesa-libIndirectGL
 %manifest %{name}.manifest
 %defattr(-,root,root)
@@ -527,25 +559,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libOSMesa.so.8*
-
-%if %{with wayland}
-%files -n libwayland-egl
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libwayland-egl.so.1*
-%endif
-
-%files -n libgbm
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libgbm.so.1*
-
-%files -n libgbm-devel
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_includedir}/gbm.h
-%{_libdir}/libgbm.so
-%{_libdir}/pkgconfig/gbm.pc
 
 %ifnarch %arm
 
@@ -571,6 +584,21 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %endif
 
+%endif
+
+%files -n libgbm
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_libdir}/libgbm.so.1*
+
+%files -n libgbm-devel
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_includedir}/gbm.h
+%{_libdir}/libgbm.so
+%{_libdir}/pkgconfig/gbm.pc
+
+
 %files -n mesa-libglapi
 %manifest %{name}.manifest
 %defattr(-,root,root)
@@ -580,12 +608,13 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_includedir}/GL/internal
-%{_libdir}/libOSMesa.so
 %{_libdir}/libglapi.so
-%{_libdir}/pkgconfig/osmesa.pc
 %if %{with wayland}
 %{_libdir}/libwayland-egl.so
 %{_libdir}/pkgconfig/wayland-egl.pc
+%else
+%{_libdir}/libOSMesa.so
+%{_libdir}/pkgconfig/osmesa.pc
 %endif
 %{_libdir}/pkgconfig/dri.pc
 %{_libdir}/libdricore9*.so
