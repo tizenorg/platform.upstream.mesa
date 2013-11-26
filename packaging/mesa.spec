@@ -494,11 +494,11 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libEGL.so
 %{_libdir}/pkgconfig/egl.pc
 
-%if %{with wayland}
-%else
 %files -n mesa-libGL
 %manifest %{name}.manifest
 %defattr(-,root,root)
+%if %{with wayland}
+%else
 %{_libdir}/libGL.so.1*
 %endif
 
