@@ -1,5 +1,6 @@
 %define glamor 1
 %bcond_with wayland
+%bcond_without x 
 
 Name:           mesa
 Version:        9.2.1
@@ -38,6 +39,8 @@ BuildRequires:  pkgconfig(libudev) > 150
 %if %{with wayland}
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
+%endif
+%if %{without x}
 %else
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(x11-xcb)
@@ -77,6 +80,8 @@ Requires:       mesa-libglapi = %{version}
 Requires:       libgbm-devel
 %if %{with wayland}
 Requires:       libwayland-egl
+%endif
+%if %{without x}
 %else
 Requires:       mesa-libIndirectGL = %{version}
 Requires:       libOSMesa = %{version}
@@ -228,7 +233,7 @@ extensions for the special needs of embedded systems.
 This package provides a development environment for building
 applications using the OpenGL|ES 3.x APIs.
 
-%if %{with wayland}
+%if %{without x}
 %else
 %package -n mesa-libIndirectGL
 # This is the equivalent to Debian's libgl1-mesa-swx11
@@ -288,7 +293,7 @@ openwfd.
 This package provides the development environment for compiling
 programs against the GBM library.
 
-%if %{with wayland}
+%if %{without x}
 %else
 %package -n libxatracker
 Version:        1.0.0
@@ -355,24 +360,34 @@ autoreconf -fi
 %configure --enable-gles1 \
            --enable-gles2 \
 %if %{with wayland}
+%if %{without x}
            --with-egl-platforms=drm,wayland \
            --disable-glx \
 %else
+           --with-egl-platforms=x11,drm,wayland \
+%endif
+%else
            --with-egl-platforms=x11,drm \
-           --enable-xa \
 %endif
            --enable-shared-glapi \
+%if %{without x}
+%else
+           --enable-xa \
+%endif
            --enable-texture-float \
 %if %glamor
            --enable-gbm \
+%if %{without x}
+%else
            --enable-glx-tls \
+%endif
 %endif
            --with-dri-searchpath=/usr/%{_lib}/dri/updates:/usr/%{_lib}/dri \
 %ifarch %ix86 x86_64
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
            --with-gallium-drivers="swrast,svga" \
-%if %{with wayland}
+%if %{without x}
 %else
            --enable-xvmc \
 %endif
@@ -385,7 +400,7 @@ autoreconf -fi
 make %{?_smp_mflags}
 %make_install
 
-%if %{with wayland}
+%if %{without x}
 %else
 # build and install Indirect Rendering only libGL
 
@@ -440,7 +455,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libGLESv2 -p /sbin/ldconfig
 
-%if %{with wayland}
+%if %{without x}
 %else
 %post   -n mesa-libIndirectGL -p /sbin/ldconfig
 
@@ -494,11 +509,11 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libEGL.so
 %{_libdir}/pkgconfig/egl.pc
 
-%if %{with wayland}
-%else
 %files -n mesa-libGL
 %manifest %{name}.manifest
 %defattr(-,root,root)
+%if %{without x}
+%else
 %{_libdir}/libGL.so.1*
 %endif
 
@@ -507,7 +522,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %defattr(-,root,root)
 %dir %{_includedir}/GL
 %{_includedir}/GL/*.h
-%if %{with wayland}
+%if %{without x}
 %else
 %{_libdir}/libGL.so
 %endif
@@ -544,6 +559,9 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %defattr(-,root,root)
 %{_libdir}/libwayland-egl.so.1*
 
+%endif
+
+%if %{without x}
 %else
 %files -n mesa-libIndirectGL
 %manifest %{name}.manifest
@@ -612,6 +630,8 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %if %{with wayland}
 %{_libdir}/libwayland-egl.so
 %{_libdir}/pkgconfig/wayland-egl.pc
+%endif
+%if %{without x}
 %else
 %{_libdir}/libOSMesa.so
 %{_libdir}/pkgconfig/osmesa.pc
