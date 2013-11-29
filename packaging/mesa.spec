@@ -73,7 +73,10 @@ just Mesa or The Mesa 3-D graphics library.
 Summary:        Libraries, includes and more to develop Mesa applications
 Requires:       mesa = %{version}
 Requires:       mesa-libEGL-devel = %{version}
+%if %{without x}
+%else
 Requires:       mesa-libGL-devel = %{version}
+%endif
 Requires:       mesa-libGLESv1_CM-devel = %{version}
 Requires:       mesa-libGLESv2-devel = %{version}
 Requires:       mesa-libglapi = %{version}
@@ -138,6 +141,8 @@ OpenGL|ES and OpenVG.
 This package provides the development environment for compiling
 programs against the EGL library.
 
+%if %{without x}
+%else
 %package -n mesa-libGL
 Summary:        The GL/GLX runtime of the Mesa 3D graphics library
 Requires:       mesa = %{version}
@@ -163,6 +168,7 @@ graphics.
 
 This package includes headers and static libraries for compiling
 programs with Mesa.
+%endif
 
 %package -n mesa-libGLESv1_CM
 Summary:        Free implementation of the OpenGL|ES 1.x API
@@ -401,6 +407,11 @@ make %{?_smp_mflags}
 %make_install
 
 %if %{without x}
+rm -rf %{buildroot}%{_includedir}/GL
+rm -f %{buildroot}%{_libdir}/pkgconfig/gl.pc
+%endif
+
+%if %{without x}
 %else
 # build and install Indirect Rendering only libGL
 
@@ -443,10 +454,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libEGL -p /sbin/ldconfig
 
-%post   -n mesa-libGL -p /sbin/ldconfig
-
-%postun -n mesa-libGL -p /sbin/ldconfig
-
 %post   -n mesa-libGLESv1_CM -p /sbin/ldconfig
 
 %postun -n mesa-libGLESv1_CM -p /sbin/ldconfig
@@ -457,6 +464,10 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %if %{without x}
 %else
+%post   -n mesa-libGL -p /sbin/ldconfig
+
+%postun -n mesa-libGL -p /sbin/ldconfig
+
 %post   -n mesa-libIndirectGL -p /sbin/ldconfig
 
 %postun -n mesa-libIndirectGL -p /sbin/ldconfig
@@ -509,6 +520,10 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libEGL.so
 %{_libdir}/pkgconfig/egl.pc
 
+
+
+%if %{without x}
+%else
 %files -n mesa-libGL
 %manifest %{name}.manifest
 %defattr(-,root,root)
@@ -527,6 +542,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libGL.so
 %endif
 %{_libdir}/pkgconfig/gl.pc
+%endif
 
 %files -n mesa-libGLESv1_CM
 %manifest %{name}.manifest
@@ -625,7 +641,10 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %files devel
 %manifest %{name}.manifest
 %defattr(-,root,root)
+%if %{without x}
+%else
 %{_includedir}/GL/internal
+%endif
 %{_libdir}/libglapi.so
 %if %{with wayland}
 %{_libdir}/libwayland-egl.so
