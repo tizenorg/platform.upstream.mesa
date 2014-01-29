@@ -25,7 +25,6 @@ BuildRequires:  gettext-tools
 BuildRequires:  libtool
 BuildRequires:  libxml2-python
 BuildRequires:  llvm-devel
-BuildRequires:  makedepend
 BuildRequires:  pkgconfig
 BuildRequires:  python
 BuildRequires:  pkgconfig(expat)
@@ -39,6 +38,7 @@ BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
 %endif
 %if %{with x}
+BuildRequires:  makedepend
 BuildRequires:  pkgconfig(dri2proto) >= 2.1
 BuildRequires:  pkgconfig(glproto) >= 1.4.11
 BuildRequires:  pkgconfig(x11)
