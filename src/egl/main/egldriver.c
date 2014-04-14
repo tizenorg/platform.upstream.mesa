@@ -562,8 +562,8 @@ _eglAddDrivers(void)
        * Add other drivers only when EGL_DRIVER is not set.  The order here
        * decides the priorities.
        */
-      _eglAddGalliumDriver();
       _eglAddBuiltInDrivers();
+      _eglAddGalliumDriver();
    }
 
    return (_eglModules != NULL);

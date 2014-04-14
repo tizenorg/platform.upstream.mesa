@@ -37,6 +37,9 @@
 #endif
 #include "target-helpers/inline_sw_helper.h"
 #include "state_tracker/drisw_api.h"
+#ifdef HAVE_WINSYS_XLIB
+#include "state_tracker/xlib_sw_winsys.h"
+#endif
 
 struct pipe_loader_sw_device {
    struct pipe_loader_device base;
