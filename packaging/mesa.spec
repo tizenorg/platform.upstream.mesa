@@ -136,6 +136,13 @@ OpenGL|ES and OpenVG.
 This package provides the development environment for compiling
 programs against the EGL library.
 
+%package -n mesa-gallium-pipe
+# Kudos to Debian for the descriptions
+Summary:        Free implementation of Gallium-pipe API
+
+%description -n mesa-gallium-pipe
+Gallium
+
 %if %{with x}
 %package -n mesa-libGL
 Summary:        The GL/GLX runtime of the Mesa 3D graphics library
@@ -359,10 +366,10 @@ autoreconf -fi
            --enable-gles2 \
 %if %{with wayland}
 %if !%{with x}
-           --with-egl-platforms=drm,wayland \
+           --with-egl-platforms=wayland,drm \
            --disable-glx \
 %else
-           --with-egl-platforms=x11,drm,wayland \
+           --with-egl-platforms=wayland,drm,x11 \
 %endif
 %else
            --with-egl-platforms=x11,drm \
@@ -380,9 +387,10 @@ autoreconf -fi
 %endif
            --with-dri-searchpath=/usr/%{_lib}/dri/updates:/usr/%{_lib}/dri \
 %ifarch %ix86 x86_64
+           --enable-gallium-egl \
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
-           --with-gallium-drivers="swrast,svga" \
+           --with-gallium-drivers="i915,svga,swrast" \
 %if %{with x}
            --enable-xvmc \
 %endif
@@ -442,6 +450,10 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libEGL -p /sbin/ldconfig
 
+%post   -n mesa-gallium-pipe -p /sbin/ldconfig
+
+%postun -n mesa-gallium-pipe -p /sbin/ldconfig
+
 %post   -n mesa-libGLESv1_CM -p /sbin/ldconfig
 
 %postun -n mesa-libGLESv1_CM -p /sbin/ldconfig
@@ -498,6 +510,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libEGL.so.1*
+%{_libdir}/egl/egl_gallium.so
 
 %files -n mesa-libEGL-devel
 %manifest %{name}.manifest
@@ -507,7 +520,10 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libEGL.so
 %{_libdir}/pkgconfig/egl.pc
 
-
+%files -n mesa-gallium-pipe
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_libdir}/gallium-pipe/*
 
 %if %{with x}
 %files -n mesa-libGL
@@ -603,6 +619,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libgbm.so.1*
+%{_libdir}/gbm/gbm_gallium_drm.so
 
 %files -n libgbm-devel
 %manifest %{name}.manifest

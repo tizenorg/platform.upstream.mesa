@@ -40,8 +40,8 @@ egl_g3d_wl_drm_helper_reference_buffer(void *user_data, uint32_t name, int fd,
    templ.target = PIPE_TEXTURE_2D;
    templ.format = pf;
    templ.bind = PIPE_BIND_RENDER_TARGET | PIPE_BIND_SAMPLER_VIEW;
-   templ.width0 = buffer->buffer.width;
-   templ.height0 = buffer->buffer.height;
+   templ.width0 = buffer->width;
+   templ.height0 = buffer->height;
    templ.depth0 = 1;
    templ.array_size = 1;
 
@@ -64,8 +64,9 @@ egl_g3d_wl_drm_helper_unreference_buffer(void *user_data,
 
 struct pipe_resource *
 egl_g3d_wl_drm_common_wl_buffer_get_resource(struct native_display *ndpy,
-                                             struct wl_buffer *buffer)
+                                             struct wl_buffer *_buffer)
 {
+   struct wl_drm_buffer *buffer = (struct wl_drm_buffer *) _buffer;
    return wayland_drm_buffer_get_buffer(buffer);
 }
 
@@ -77,7 +78,7 @@ egl_g3d_wl_drm_common_query_buffer(struct native_display *ndpy,
    struct wl_drm_buffer *buffer = (struct wl_drm_buffer *) _buffer;
    struct pipe_resource *resource = buffer->driver_buffer;
 
-   if (!wayland_buffer_is_drm(&buffer->buffer))
+   if (!buffer)
       return EGL_FALSE;
 
    switch (attribute) {
@@ -93,10 +94,10 @@ egl_g3d_wl_drm_common_query_buffer(struct native_display *ndpy,
          return EGL_FALSE;
       }
    case EGL_WIDTH:
-      *value = buffer->buffer.width;
+      *value = buffer->width;
       return EGL_TRUE;
    case EGL_HEIGHT:
-      *value = buffer->buffer.height;
+      *value = buffer->height;
       return EGL_TRUE;
    default:
       return EGL_FALSE;
