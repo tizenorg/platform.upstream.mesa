@@ -492,7 +492,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %license docs/COPYING
 %config %{_sysconfdir}/drirc
 %{_libdir}/dri/
-%{_libdir}/libdricore9*.so.*
+#%{_libdir}/lib*.so.*
 
 %files -n mesa-libEGL
 %manifest %{name}.manifest
@@ -633,7 +633,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/pkgconfig/osmesa.pc
 %endif
 %{_libdir}/pkgconfig/dri.pc
-%{_libdir}/libdricore9*.so
+#%{_libdir}/lib*.so
 
 %files -n mesa-libGLESv3-devel
 %manifest %{name}.manifest
