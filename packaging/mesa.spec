@@ -3,7 +3,7 @@
 %bcond_with x
 
 Name:           mesa
-Version:        9.2.1
+Version:        10.1.3
 Release:        0
 License:        MIT
 Summary:        System for rendering interactive 3-D graphics
