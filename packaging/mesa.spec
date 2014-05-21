@@ -1,9 +1,8 @@
 %define glamor 1
 %bcond_with wayland
-%bcond_with x
 
 Name:           mesa
-Version:        9.2.1
+Version:        10.1.3
 Release:        0
 License:        MIT
 Summary:        System for rendering interactive 3-D graphics
@@ -37,20 +36,6 @@ BuildRequires:  pkgconfig(libudev) > 150
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
 %endif
-%if %{with x}
-BuildRequires:  makedepend
-BuildRequires:  pkgconfig(dri2proto) >= 2.1
-BuildRequires:  pkgconfig(glproto) >= 1.4.11
-BuildRequires:  pkgconfig(x11)
-BuildRequires:  pkgconfig(x11-xcb)
-BuildRequires:  pkgconfig(xcb-dri2)
-BuildRequires:  pkgconfig(xcb-glx)
-BuildRequires:  pkgconfig(xdamage)
-BuildRequires:  pkgconfig(xext)
-BuildRequires:  pkgconfig(xfixes)
-BuildRequires:  pkgconfig(xvmc)
-BuildRequires:  pkgconfig(xxf86vm)
-%endif
 Provides:       Mesa = %{version}
 
 %description
@@ -78,11 +63,6 @@ Requires:       mesa-libglapi = %{version}
 Requires:       libgbm-devel
 %if %{with wayland}
 Requires:       libwayland-egl
-%endif
-%if %{with x}
-Requires:       mesa-libGL-devel = %{version}
-Requires:       mesa-libIndirectGL = %{version}
-Requires:       libOSMesa = %{version}
 %endif
 
 %description devel
@@ -142,34 +122,6 @@ Summary:        Free implementation of Gallium-pipe API
 
 %description -n mesa-gallium-pipe
 Gallium
-
-%if %{with x}
-%package -n mesa-libGL
-Summary:        The GL/GLX runtime of the Mesa 3D graphics library
-Requires:       mesa = %{version}
-
-%description -n mesa-libGL
-Mesa is a software library for 3D computer graphics that provides a
-generic OpenGL implementation for rendering three-dimensional
-graphics.
-
-GLX ("OpenGL Extension to the X Window System") provides the
-interface connecting OpenGL and the X Window System: it enables
-programs wishing to use OpenGL to do so within a window provided by
-the X Window System.
-
-%package -n mesa-libGL-devel
-Summary:        GL/GLX development files of the OpenGL API
-Requires:       mesa-libGL = %{version}
-
-%description -n mesa-libGL-devel
-Mesa is a software library for 3D computer graphics that provides a
-generic OpenGL implementation for rendering three-dimensional
-graphics.
-
-This package includes headers and static libraries for compiling
-programs with Mesa.
-%endif
 
 %package -n mesa-libGLESv1_CM
 Summary:        Free implementation of the OpenGL|ES 1.x API
@@ -240,34 +192,6 @@ extensions for the special needs of embedded systems.
 This package provides a development environment for building
 applications using the OpenGL|ES 3.x APIs.
 
-%if %{with x}
-%package -n mesa-libIndirectGL
-# This is the equivalent to Debian's libgl1-mesa-swx11
-Summary:        Free implementation of the OpenGL API
-
-%description -n mesa-libIndirectGL
-This library provides a pure software rasterizer; it does not provide
-a direct rendering capable library, or one which uses GLX. For that,
-please see Mesa-libGL1.
-
-%package -n mesa-libIndirectGL-devel
-Summary:        Development Files for the free implementation of the OpenGL API
-Requires:       mesa-libIndirectGL = %{version}
-
-%description -n mesa-libIndirectGL-devel
-This library provides a pure software rasterizer; it does not provide
-a direct rendering capable library, or one which uses GLX. For that,
-please see Mesa-libGL1.
-
-%package -n libOSMesa
-Summary:        Mesa Off-screen rendering extension
-
-%description -n libOSMesa
-OSmesa is a Mesa extension that allows programs to render to an
-off-screen buffer using the OpenGL API without having to create a
-rendering context on an X Server. It uses a pure software renderer.
-%endif
-
 %package -n libgbm
 # as per gbm.pc
 Version:        0.0.0
@@ -299,50 +223,6 @@ openwfd.
 This package provides the development environment for compiling
 programs against the GBM library.
 
-%if %{with x}
-%package -n libxatracker
-Version:        1.0.0
-Release:        0
-Summary:        XA state tracker
-
-%description -n libxatracker
-This package contains the XA state tracker for gallium3D driver.
-It superseeds the Xorg state tracker and provides an infrastructure
-to accelerate Xorg 2D operations. It is currently used by vmwgfx
-video driver.
-
-%package -n libxatracker-devel
-Version:        1.0.0
-Release:        0
-Summary:        Development files for the XA API
-Requires:       libxatracker = %{version}
-
-%description -n libxatracker-devel
-This package contains the XA state tracker for gallium3D driver.
-It superseeds the Xorg state tracker and provides an infrastructure
-to accelerate Xorg 2D operations. It is currently used by vmwgfx
-video driver.
-
-This package provides the development environment for compiling
-programs against the XA state tracker.
-
-%package -n libXvMC_softpipe
-Summary:        Software implementation of XVMC state tracker
-
-%description -n libXvMC_softpipe
-This package contains the Software implementation of the XvMC
-state tracker. This is still "work in progress", i.e. expect
-poor video quality, choppy videos and artefacts all over.
-
-%package -n libvdpau_softpipe
-Summary:        Software implementation of XVMC state tracker
-
-%description -n libvdpau_softpipe
-This package contains the Software implementation of the VDPAU
-state tracker. This is still "work in progress", i.e. expect
-poor video quality, choppy videos and artefacts all over.
-%endif
-
 %package -n mesa-libglapi
 Summary:        Free implementation of the GL API
 
@@ -364,26 +244,14 @@ rm -f src/mesa/depend
 autoreconf -fi
 %configure --enable-gles1 \
            --enable-gles2 \
-%if %{with wayland}
-%if !%{with x}
-           --with-egl-platforms=wayland,drm \
+           --disable-dri3 \
+           --with-egl-platforms=drm,wayland \
            --disable-glx \
-%else
-           --with-egl-platforms=wayland,drm,x11 \
-%endif
-%else
-           --with-egl-platforms=x11,drm \
-%endif
            --enable-shared-glapi \
-%if %{with x}
-           --enable-xa \
-%endif
+           --disable-gallium-egl \
            --enable-texture-float \
 %if %glamor
            --enable-gbm \
-%if %{with x}
-           --enable-glx-tls \
-%endif
 %endif
            --with-dri-searchpath=/usr/%{_lib}/dri/updates:/usr/%{_lib}/dri \
 %ifarch %ix86 x86_64
@@ -391,9 +259,6 @@ autoreconf -fi
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
            --with-gallium-drivers="i915,svga,swrast" \
-%if %{with x}
-           --enable-xvmc \
-%endif
 %endif
 %ifarch %arm
            --with-dri-drivers=swrast \
@@ -403,32 +268,11 @@ autoreconf -fi
 make %{?_smp_mflags}
 %make_install
 
-%if %{with wayland} && !%{with x}
+%if %{with wayland}
 rm -rf %{buildroot}%{_includedir}/GL
 rm -f %{buildroot}%{_libdir}/pkgconfig/gl.pc
 %endif
 
-%if %{with x}
-# build and install Indirect Rendering only libGL
-
-make clean
-%configure --enable-xlib-glx \
-           --enable-osmesa \
-           --disable-dri \
-           --with-egl-platforms=x11 \
-           --with-gallium-drivers="" \
-           --with-gl-lib-name=IndirectGL \
-           CFLAGS="%{optflags} -DNDEBUG"
-
-make %{?_smp_mflags}
-cp -a \
-   src/mesa/drivers/x11/.libs/libIndirectGL.so* \
-   src/mesa/drivers/osmesa/.libs/libOSMesa.so* \
-   %{buildroot}%{_libdir}
-install -m 644 src/mesa/drivers/osmesa/osmesa.pc \
-   %{buildroot}%{_libdir}/pkgconfig
-
-%endif
 # DRI driver update mechanism
 mkdir -p %{buildroot}%{_libdir}/dri/updates
 install -m 644 $RPM_SOURCE_DIR/README.updates \
@@ -462,34 +306,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libGLESv2 -p /sbin/ldconfig
 
-%if %{with x}
-%post   -n mesa-libGL -p /sbin/ldconfig
-
-%postun -n mesa-libGL -p /sbin/ldconfig
-
-%post   -n mesa-libIndirectGL -p /sbin/ldconfig
-
-%postun -n mesa-libIndirectGL -p /sbin/ldconfig
-
-%post   -n libOSMesa -p /sbin/ldconfig
-
-%postun -n libOSMesa -p /sbin/ldconfig
-
-%ifnarch  %arm
-%post   -n libxatracker -p /sbin/ldconfig
-
-%postun -n libxatracker -p /sbin/ldconfig
-
-
-
-%post   -n libXvMC_softpipe -p /sbin/ldconfig
-
-%postun -n libXvMC_softpipe -p /sbin/ldconfig
-
-%endif
-
-%endif
-
 %post   -n libgbm -p /sbin/ldconfig
 
 %postun -n libgbm -p /sbin/ldconfig
@@ -504,7 +320,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %license docs/COPYING
 %config %{_sysconfdir}/drirc
 %{_libdir}/dri/
-%{_libdir}/libdricore9*.so.*
 
 %files -n mesa-libEGL
 %manifest %{name}.manifest
@@ -524,21 +339,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/gallium-pipe/*
-
-%if %{with x}
-%files -n mesa-libGL
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libGL.so.1*
-
-%files -n mesa-libGL-devel
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%dir %{_includedir}/GL
-%{_includedir}/GL/*.h
-%{_libdir}/libGL.so
-%{_libdir}/pkgconfig/gl.pc
-%endif
 
 %files -n mesa-libGLESv1_CM
 %manifest %{name}.manifest
@@ -564,54 +364,17 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libGLESv2.so
 %{_libdir}/pkgconfig/glesv2.pc
 
+%files -n mesa-libGLESv3-devel
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_includedir}/GLES3
+
 %if %{with wayland}
 
 %files -n libwayland-egl
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libwayland-egl.so.1*
-
-%endif
-
-%if %{with x}
-%files -n mesa-libIndirectGL
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libIndirectGL.so.1*
-
-%files -n mesa-libIndirectGL-devel
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libIndirectGL.so
-
-%files -n libOSMesa
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libOSMesa.so.8*
-
-%ifnarch %arm
-
-%files -n libxatracker
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libxatracker.so.1*
-
-%files -n libxatracker-devel
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_includedir}/xa_*.h
-%{_libdir}/libxatracker.so
-%{_libdir}/pkgconfig/xatracker.pc
-
-
-%files -n libXvMC_softpipe
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_libdir}/libXvMCsoftpipe.so
-%{_libdir}/libXvMCsoftpipe.so.1
-%{_libdir}/libXvMCsoftpipe.so.1.0.0
-
-%endif
 
 %endif
 
@@ -637,24 +400,11 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %files devel
 %manifest %{name}.manifest
 %defattr(-,root,root)
-%if %{with x}
-%{_includedir}/GL/internal
-%endif
 %{_libdir}/libglapi.so
 %if %{with wayland}
 %{_libdir}/libwayland-egl.so
 %{_libdir}/pkgconfig/wayland-egl.pc
 %endif
-%if %{with x}
-%{_libdir}/libOSMesa.so
-%{_libdir}/pkgconfig/osmesa.pc
-%endif
 %{_libdir}/pkgconfig/dri.pc
-%{_libdir}/libdricore9*.so
-
-%files -n mesa-libGLESv3-devel
-%manifest %{name}.manifest
-%defattr(-,root,root)
-%{_includedir}/GLES3
 
 %changelog
