@@ -116,12 +116,14 @@ OpenGL|ES and OpenVG.
 This package provides the development environment for compiling
 programs against the EGL library.
 
+%ifarch %ix86 x86_64
 %package -n mesa-gallium-pipe
 # Kudos to Debian for the descriptions
 Summary:        Free implementation of Gallium-pipe API
 
 %description -n mesa-gallium-pipe
 Gallium
+%endif
 
 %package -n mesa-libGLESv1_CM
 Summary:        Free implementation of the OpenGL|ES 1.x API
@@ -294,9 +296,10 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libEGL -p /sbin/ldconfig
 
+%ifarch %ix86 x86_64
 %post   -n mesa-gallium-pipe -p /sbin/ldconfig
-
 %postun -n mesa-gallium-pipe -p /sbin/ldconfig
+%endif
 
 %post   -n mesa-libGLESv1_CM -p /sbin/ldconfig
 
@@ -325,7 +328,9 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libEGL.so.1*
+%ifarch %ix86 x86_64
 %{_libdir}/egl/egl_gallium.so
+%endif
 
 %files -n mesa-libEGL-devel
 %manifest %{name}.manifest
@@ -335,10 +340,12 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libEGL.so
 %{_libdir}/pkgconfig/egl.pc
 
+%ifarch %ix86 x86_64
 %files -n mesa-gallium-pipe
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/gallium-pipe/*
+%endif
 
 %files -n mesa-libGLESv1_CM
 %manifest %{name}.manifest
@@ -382,7 +389,9 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libgbm.so.1*
+%ifarch %ix86 x86_64
 %{_libdir}/gbm/gbm_gallium_drm.so
+%endif
 
 %files -n libgbm-devel
 %manifest %{name}.manifest
