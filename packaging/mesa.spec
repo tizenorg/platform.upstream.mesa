@@ -1,4 +1,5 @@
 %define glamor 1
+%bcond_with x
 %bcond_with wayland
 
 Name:           mesa
@@ -24,6 +25,17 @@ BuildRequires:  gettext-tools
 BuildRequires:  libtool
 BuildRequires:  libxml2-python
 BuildRequires:  llvm-devel
+%if %{with x}
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(x11-xcb)
+BuildRequires:  pkgconfig(xext)
+BuildRequires:  pkgconfig(xdamage)
+BuildRequires:  pkgconfig(xfixes)
+BuildRequires:  pkgconfig(dri2proto)
+BuildRequires:  pkgconfig(glproto)
+BuildRequires:  pkgconfig(xcb-dri2)
+BuildRequires:  pkgconfig(xcb-glx)
+%endif
 BuildRequires:  pkgconfig
 BuildRequires:  python
 BuildRequires:  pkgconfig(expat)
@@ -64,6 +76,9 @@ Requires:       libgbm-devel
 %if %{with wayland}
 Requires:       libwayland-egl
 %endif
+%if %{with x}
+Requires:       mesa-libGL-devel = %{version}
+%endif
 
 %description devel
 Mesa is a 3-D graphics library with an API which is very similar to
@@ -79,6 +94,28 @@ Please do not refer to the library as MesaGL (for legal reasons). It's
 just Mesa or The Mesa 3-D graphics library.
 
 * OpenGL is a trademark of Silicon Graphics Incorporated.
+
+%if %{with x}
+%package -n mesa-libGL
+Summary:        Free implementation of the desktop GL API
+
+%description -n mesa-libGL
+This package contains the GL native platform graphics interface
+library. GL provides a desktop-oriented API for creating
+rendering surfaces. It depends on X11.
+
+%package -n mesa-libGL-devel
+Summary:        Development files for the desktop GL API
+Requires:       mesa-libGL = %{version}
+
+%description -n mesa-libGL-devel
+This package contains the GL native platform graphics interface
+library. GL provides a desktop-oriented API for creating
+rendering surfaces. It depends on X11.
+
+This package provides the development environment for compiling
+programs against the GL library.
+%endif
 
 %package -n libwayland-egl
 Summary:        Wayland EGL backend for Mesa
@@ -247,8 +284,21 @@ autoreconf -fi
 %configure --enable-gles1 \
            --enable-gles2 \
            --disable-dri3 \
+%if %{with x}
+%if %{with wayland}
+           --with-egl-platforms=drm,wayland,x11 \
+%else
+           --with-egl-platforms=drm,x11 \
+%endif
+%else
+%if %{with wayland}
            --with-egl-platforms=drm,wayland \
            --disable-glx \
+%else
+           --with-egl-platforms=drm \
+           --disable-glx \
+%endif
+%endif
            --enable-shared-glapi \
            --disable-gallium-egl \
            --enable-texture-float \
@@ -270,7 +320,7 @@ autoreconf -fi
 make %{?_smp_mflags}
 %make_install
 
-%if %{with wayland}
+%if !%{with x}
 rm -rf %{buildroot}%{_includedir}/GL
 rm -f %{buildroot}%{_libdir}/pkgconfig/gl.pc
 %endif
@@ -323,6 +373,20 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %license docs/COPYING
 %config %{_sysconfdir}/drirc
 %{_libdir}/dri/
+
+%if %{with x}
+%files -n mesa-libGL
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_libdir}/libGL.so.1*
+
+%files -n mesa-libGL-devel
+%manifest %{name}.manifest
+%defattr(-,root,root)
+%{_includedir}/GL
+%{_libdir}/libGL.so
+%{_libdir}/pkgconfig/gl.pc
+%endif
 
 %files -n mesa-libEGL
 %manifest %{name}.manifest
