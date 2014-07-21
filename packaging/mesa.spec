@@ -1,4 +1,5 @@
 %define glamor 1
+%bcond_with x
 %bcond_with wayland
 
 Name:           mesa
@@ -37,6 +38,10 @@ BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
 %endif
 Provides:       Mesa = %{version}
+
+%if !%{with x}
+ExclusiveArch:
+%endif
 
 %description
 Mesa is a 3-D graphics library with an API which is very similar to
