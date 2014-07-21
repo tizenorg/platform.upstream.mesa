@@ -1,4 +1,5 @@
 %define glamor 1
+%bcond_with x
 %bcond_with wayland
 
 Name:           mesa
@@ -35,6 +36,11 @@ BuildRequires:  pkgconfig(libudev) > 150
 %if %{with wayland}
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-server)
+%endif
+%if %{with x}
+BuildRequires:  pkgconfig(x11-xcb)
+BuildRequires:  pkgconfig(xcb-dri2)
+BuildRequires:  pkgconfig(xcb-xfixes)
 %endif
 Provides:       Mesa = %{version}
 
@@ -80,11 +86,13 @@ just Mesa or The Mesa 3-D graphics library.
 
 * OpenGL is a trademark of Silicon Graphics Incorporated.
 
+%if %{with wayland}
 %package -n libwayland-egl
 Summary:        Wayland EGL backend for Mesa
 
 %description -n libwayland-egl
 Wayland EGL backend for Mesa.
+%endif
 
 %package -n mesa-libEGL
 # Kudos to Debian for the descriptions
@@ -247,7 +255,12 @@ autoreconf -fi
 %configure --enable-gles1 \
            --enable-gles2 \
            --disable-dri3 \
+%if %{with wayland}
            --with-egl-platforms=drm,wayland \
+%endif
+%if %{with x}
+           --with-egl-platforms=drm,x11 \
+%endif
            --disable-glx \
            --enable-shared-glapi \
            --disable-gallium-egl \
@@ -270,7 +283,7 @@ autoreconf -fi
 make %{?_smp_mflags}
 %make_install
 
-%if %{with wayland}
+%if %{with wayland} || %{with x}
 rm -rf %{buildroot}%{_includedir}/GL
 rm -f %{buildroot}%{_libdir}/pkgconfig/gl.pc
 %endif
@@ -288,9 +301,11 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -p /sbin/ldconfig
 
+%if %{with wayland}
 %post   -n libwayland-egl -p /sbin/ldconfig
 
 %postun -n libwayland-egl -p /sbin/ldconfig
+%endif
 
 %post   -n mesa-libEGL -p /sbin/ldconfig
 
