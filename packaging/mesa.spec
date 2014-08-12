@@ -312,7 +312,7 @@ autoreconf -fi
            --with-dri-drivers=i915,i965,swrast \
            --with-gallium-drivers="i915,svga,swrast" \
 %endif
-%ifarch %arm
+%ifarch %arm aarch64
            --with-dri-drivers=swrast \
            --with-gallium-drivers="" \
 %endif
