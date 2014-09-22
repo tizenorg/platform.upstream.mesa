@@ -120,7 +120,7 @@ programs against the GL library.
 %endif
 
 %package -n libwayland-egl
-Summary:        Wayland EGL backend for Mesa
+Summary:        Wayland EGL backend
 
 %description -n libwayland-egl
 Wayland EGL backend for Mesa.
@@ -158,7 +158,7 @@ programs against the EGL library.
 %ifarch %ix86 x86_64
 %package -n mesa-gallium-pipe
 # Kudos to Debian for the descriptions
-Summary:        Free implementation of Gallium-pipe API
+Summary:        Gallium-pipe API
 
 %description -n mesa-gallium-pipe
 Gallium
@@ -300,48 +300,49 @@ rm -rf docs/README.{VMS,WIN32,OS2}
 
 %build
 
-%install
 rm -f src/mesa/depend
-autoreconf -fi
-%configure --enable-gles1 \
-           --enable-gles2 \
-           --disable-dri3 \
+%reconfigure --enable-gles1 \
+             --enable-gles2 \
+             --disable-dri3 \
 %if %{with x}
 %if %{with wayland}
-           --with-egl-platforms=drm,wayland,x11 \
+             --with-egl-platforms=drm,wayland,x11 \
 %else
-           --with-egl-platforms=drm,x11 \
+             --with-egl-platforms=drm,x11 \
 %endif
 %else
 %if %{with wayland}
-           --with-egl-platforms=drm,wayland \
-           --disable-glx \
+             --with-egl-platforms=drm,wayland \
+             --disable-glx \
 %else
-           --with-egl-platforms=drm \
-           --disable-glx \
+             --with-egl-platforms=drm \
+             --disable-glx \
 %endif
 %endif
-           --enable-shared-glapi \
-           --enable-texture-float \
+             --enable-shared-glapi \
+             --enable-texture-float \
 %if %glamor
-           --enable-gbm \
+             --enable-gbm \
 %endif
-           --with-dri-searchpath=/usr/%{_lib}/dri/updates:/usr/%{_lib}/dri \
+             --with-dri-searchpath=/usr/%{_lib}/dri/updates:/usr/%{_lib}/dri \
 %ifarch %ix86 x86_64
-           --enable-gallium-egl \
-           --enable-gallium-llvm \
-           --with-dri-drivers=i915,i965,swrast \
-           --with-gallium-drivers="i915,svga,swrast" \
-           --enable-xa \
+             --enable-gallium-egl \
+             --enable-gallium-llvm \
+             --with-dri-drivers=i915,i965,swrast \
+             --with-gallium-drivers="i915,svga,swrast" \
+             --enable-xa \
 %else
-           --disable-gallium-egl \
+             --disable-gallium-egl \
 %endif
 %ifarch %arm aarch64
-           --with-dri-drivers=swrast \
-           --with-gallium-drivers="" \
+             --with-dri-drivers=swrast \
+             --with-gallium-drivers="" \
 %endif
-           CFLAGS="%{optflags} -DNDEBUG"
-make %{?_smp_mflags}
+             CFLAGS="%{optflags} -DNDEBUG"
+
+%__make %{?_smp_mflags}
+
+%install
 %make_install
 
 %if !%{with x}
@@ -396,7 +397,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %defattr(-,root,root)
 %license docs/COPYING
 %config %{_sysconfdir}/drirc
-%{_libdir}/dri/
+%{_libdir}/dri
 
 %if %{with x}
 %files -n mesa-libGL
@@ -499,7 +500,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/libgbm.so
 %{_libdir}/pkgconfig/gbm.pc
 
-
 %files -n mesa-libglapi
 %manifest %{name}.manifest
 %defattr(-,root,root)
@@ -514,5 +514,3 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/pkgconfig/wayland-egl.pc
 %endif
 %{_libdir}/pkgconfig/dri.pc
-
-%changelog
