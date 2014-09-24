@@ -3,7 +3,7 @@
 %bcond_with wayland
 
 Name:           mesa
-Version:        10.1.3
+Version:        10.3
 Release:        0
 License:        MIT
 Summary:        System for rendering interactive 3-D graphics
@@ -38,6 +38,8 @@ BuildRequires:  pkgconfig(xcb-glx)
 %endif
 BuildRequires:  pkgconfig
 BuildRequires:  python
+BuildRequires:  python-lxml
+BuildRequires:  python-xml
 BuildRequires:  pkgconfig(expat)
 BuildRequires:  pkgconfig(libdrm) >= 2.4.24
 %ifarch x86_64 %ix86
@@ -72,7 +74,7 @@ Requires:       mesa-libEGL-devel = %{version}
 Requires:       mesa-libGLESv1_CM-devel = %{version}
 Requires:       mesa-libGLESv2-devel = %{version}
 Requires:       mesa-libglapi = %{version}
-Requires:       libgbm-devel
+Requires:       mesa-libgbm-devel
 %if %{with wayland}
 Requires:       libwayland-egl
 %endif
@@ -231,13 +233,10 @@ extensions for the special needs of embedded systems.
 This package provides a development environment for building
 applications using the OpenGL|ES 3.x APIs.
 
-%package -n libgbm
-# as per gbm.pc
-Version:        0.0.0
-Release:        0
+%package -n mesa-libgbm
 Summary:        Generic buffer management API
 
-%description -n libgbm
+%description -n mesa-libgbm
 This package contains the GBM buffer management library. It provides
 a mechanism for allocating buffers for graphics rendering tied to
 Mesa.
@@ -245,13 +244,11 @@ Mesa.
 GBM is intended to be used as a native platform for EGL on drm or
 openwfd.
 
-%package -n libgbm-devel
-Version:        0.0.0
-Release:        0
+%package -n mesa-libgbm-devel
 Summary:        Development files for the EGL API
-Requires:       libgbm = %{version}
+Requires:       mesa-libgbm = %{version}
 
-%description -n libgbm-devel
+%description -n mesa-libgbm-devel
 This package contains the GBM buffer management library. It provides
 a mechanism for allocating buffers for graphics rendering tied to
 Mesa.
@@ -300,7 +297,6 @@ autoreconf -fi
 %endif
 %endif
            --enable-shared-glapi \
-           --disable-gallium-egl \
            --enable-texture-float \
 %if %glamor
            --enable-gbm \
@@ -311,6 +307,8 @@ autoreconf -fi
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
            --with-gallium-drivers="i915,svga,swrast" \
+%else
+           --disable-gallium-egl \
 %endif
 %ifarch %arm aarch64
            --with-dri-drivers=swrast \
@@ -359,9 +357,9 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %postun -n mesa-libGLESv2 -p /sbin/ldconfig
 
-%post   -n libgbm -p /sbin/ldconfig
+%post   -n mesa-libgbm -p /sbin/ldconfig
 
-%postun -n libgbm -p /sbin/ldconfig
+%postun -n mesa-libgbm -p /sbin/ldconfig
 
 %post   -n mesa-libglapi -p /sbin/ldconfig
 
@@ -408,7 +406,6 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %files -n mesa-gallium-pipe
 %manifest %{name}.manifest
 %defattr(-,root,root)
-%{_libdir}/gallium-pipe/*
 %endif
 
 %files -n mesa-libGLESv1_CM
@@ -449,7 +446,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 
 %endif
 
-%files -n libgbm
+%files -n mesa-libgbm
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_libdir}/libgbm.so.1*
@@ -457,7 +454,7 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %{_libdir}/gbm/gbm_gallium_drm.so
 %endif
 
-%files -n libgbm-devel
+%files -n mesa-libgbm-devel
 %manifest %{name}.manifest
 %defattr(-,root,root)
 %{_includedir}/gbm.h
