@@ -235,6 +235,7 @@ applications using the OpenGL|ES 3.x APIs.
 
 %package -n mesa-libgbm
 Summary:        Generic buffer management API
+Obsoletes:      libgbm
 
 %description -n mesa-libgbm
 This package contains the GBM buffer management library. It provides
@@ -247,6 +248,7 @@ openwfd.
 %package -n mesa-libgbm-devel
 Summary:        Development files for the EGL API
 Requires:       mesa-libgbm = %{version}
+Obsoletes:      libgbm-devel
 
 %description -n mesa-libgbm-devel
 This package contains the GBM buffer management library. It provides
