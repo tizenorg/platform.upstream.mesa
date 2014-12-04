@@ -162,6 +162,31 @@ Summary:        Free implementation of Gallium-pipe API
 
 %description -n mesa-gallium-pipe
 Gallium
+
+%package -n libxatracker
+Summary:   XA state tracker
+Group:     System/Libraries
+Provides:  xatracker
+
+%description -n libxatracker
+This package contains the XA state tracker for gallium3D driver.
+It superseeds the Xorg state tracker and provides an infrastructure
+to accelerate Xorg 2D operations. It is currently used by vmwgfx
+video driver.
+
+%package -n libxatracker-devel
+Summary:        Development files for the XA API
+Group:          Development/Libraries/C and C++
+Requires:       libxatracker = %version
+
+%description -n libxatracker-devel
+This package contains the XA state tracker for gallium3D driver.
+It superseeds the Xorg state tracker and provides an infrastructure
+to accelerate Xorg 2D operations. It is currently used by vmwgfx
+video driver.
+
+This package provides the development environment for compiling
+programs against the XA state tracker.
 %endif
 
 %package -n mesa-libGLESv1_CM
@@ -307,6 +332,7 @@ autoreconf -fi
            --enable-gallium-llvm \
            --with-dri-drivers=i915,i965,swrast \
            --with-gallium-drivers="i915,svga,swrast" \
+           --enable-xa \
 %else
            --disable-gallium-egl \
 %endif
@@ -406,6 +432,18 @@ install -m 644 $RPM_SOURCE_DIR/drirc %{buildroot}/etc
 %files -n mesa-gallium-pipe
 %manifest %{name}.manifest
 %defattr(-,root,root)
+
+%files -n libxatracker
+%defattr(-,root,root)
+%manifest %{name}.manifest
+%_libdir/libxatracker.so.*
+
+%files -n libxatracker-devel
+%defattr(-,root,root)
+%manifest %{name}.manifest
+%_includedir/xa_*.h
+%_libdir/libxatracker.so
+%_libdir/pkgconfig/xatracker.pc
 %endif
 
 %files -n mesa-libGLESv1_CM
