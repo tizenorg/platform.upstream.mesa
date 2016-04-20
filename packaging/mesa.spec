@@ -193,6 +193,8 @@ mkdir %{buildroot}%{_libdir}/driver
 mv %{buildroot}%{_libdir}/libEGL* %{buildroot}%{_libdir}/driver/
 mv %{buildroot}%{_libdir}/libGLES* %{buildroot}%{_libdir}/driver/
 
+ln -sf driver/libGLESv1_CM.so.1.1.0 %{buildroot}%{_libdir}/libGLESv1_CM.so.1.1
+
 %post   -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -225,7 +227,7 @@ mv %{buildroot}%{_libdir}/libGLES* %{buildroot}%{_libdir}/driver/
 %endif
 %{_libdir}/libglapi.so
 %{_libdir}/libglapi.so.0*
-
+%{_libdir}/libGLESv1_CM.so.1.1
 
 %if %{with wayland}
 %files -n libwayland-egl
